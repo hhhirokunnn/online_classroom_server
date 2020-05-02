@@ -5,6 +5,8 @@ build/
 !**/src/main/**
 !**/src/test/**
 
+aws.properties
+
 ### STS ###
 .apt_generated
 .classpath
