@@ -1,30 +1,64 @@
 package com.hhhirokunnn.classroom_community_server.domain.services.step
 
+import com.amazonaws.auth.AWSStaticCredentialsProvider
+import com.amazonaws.auth.BasicAWSCredentials
+import com.amazonaws.services.s3.AmazonS3ClientBuilder
+import com.amazonaws.services.s3.model.PutObjectRequest
+import com.hhhirokunnn.classroom_community_server.app.models.errors.AwsS3UploadError
 import com.hhhirokunnn.classroom_community_server.app.models.parameters.StepRegisterParameter
 import com.hhhirokunnn.classroom_community_server.domain.entities.article.ArticleEntity
-import com.hhhirokunnn.classroom_community_server.domain.entities.favorite_article.FavoriteArticleEntity
 import com.hhhirokunnn.classroom_community_server.domain.entities.step.StepEntity
 import com.hhhirokunnn.classroom_community_server.domain.repositories.step.StepRepository
+import org.springframework.context.annotation.PropertySource
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
+import java.io.File
+import java.io.FileOutputStream
+import java.time.LocalDateTime
 
 @Service
+@PropertySource("classpath:aws.properties")
 class StepService(private val stepRepository: StepRepository) {
 
-    fun save(param: StepRegisterParameter, article: ArticleEntity): StepEntity {
+    fun save(param: StepRegisterParameter, image: MultipartFile?, article: ArticleEntity): StepEntity {
 
         return stepRepository.save(
             StepEntity(
-                    description = param.description,
-                    image = "",
-                    article = article
+                description = param.description,
+                image = image?.let { uploadFile(it, param.articleId) },
+                article = article
             ))
     }
 
-    private fun uploadFile(image: MultipartFile): String {
+    private fun uploadFile(image: MultipartFile, articleId: Long): String {
+        val fileName = toFileName(articleId)
 
-        return "uploadFile"
+        val bucketName = "hirokuntest"
+        val region = "ap-northeast-1"
+        val accessKey = ""
+        val secretKey = ""
+        val client = AmazonS3ClientBuilder
+                .standard()
+                .withCredentials(AWSStaticCredentialsProvider(BasicAWSCredentials(accessKey, secretKey))).build()
+        try {
+            client.putObject(PutObjectRequest(bucketName, "steps/${fileName}", convertToFile(image)) )
+        } catch(e: Exception) {
+            throw AwsS3UploadError(error = e)
+        }
+
+        return "https://${bucketName}.s3-${region}.amazonaws.com/steps/${fileName}"
     }
+
+    private fun convertToFile(mulFile: MultipartFile): File {
+        val convFile = File(mulFile.originalFilename!!)
+        convFile.createNewFile()
+        val fos = FileOutputStream(convFile)
+        fos.write(mulFile.bytes)
+        fos.close()
+        return convFile
+    }
+
+    private fun toFileName(articleId: Long) = "${articleId}_${LocalDateTime.now()}"
 
     fun findByArticle(articleId: Long): List<StepEntity> = stepRepository.findByArticleId(articleId)
 }
