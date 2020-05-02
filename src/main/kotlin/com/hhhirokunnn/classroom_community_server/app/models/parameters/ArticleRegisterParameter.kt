@@ -5,7 +5,6 @@ data class ArticleRegisterParameter(
     val summary: String,
     val estimatedTime: Int?,
     val memberUnit: Int?,
-    val image: String?,
     val youtubeLink: String?,
     val userId: Long
 )

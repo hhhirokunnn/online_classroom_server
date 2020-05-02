@@ -6,7 +6,7 @@ data class StepParamParseError(
         val errorMessage: String = "Step登録のパラメータが正しくありません。",
         val error: Exception): JsonParseError()
 
-data class MaterialParamParseError(
+data class ArticleParamParseError(
         val errorMessage: String = "Material登録のパラメータが正しくありません。",
         val error: Exception): JsonParseError()
 

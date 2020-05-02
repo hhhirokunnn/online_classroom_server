@@ -1,10 +1,11 @@
 package com.hhhirokunnn.classroom_community_server.app.controllers.api.article
 
-import com.hhhirokunnn.classroom_community_server.app.models.errors.ArticleError
-import com.hhhirokunnn.classroom_community_server.app.models.errors.ArticleNotFoundError
-import com.hhhirokunnn.classroom_community_server.app.models.errors.UserNotFoundError
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
+import com.hhhirokunnn.classroom_community_server.app.models.errors.*
 import com.hhhirokunnn.classroom_community_server.app.models.parameters.ArticleRegisterParameter
 import com.hhhirokunnn.classroom_community_server.app.models.parameters.FavoriteArticleRegisterParameter
+import com.hhhirokunnn.classroom_community_server.app.models.parameters.StepRegisterParameter
 import com.hhhirokunnn.classroom_community_server.app.models.responses.FavoriteArticleResponse
 import com.hhhirokunnn.classroom_community_server.app.models.responses.MyResponse
 import com.hhhirokunnn.classroom_community_server.app.models.responses.SuccessResponse
@@ -17,6 +18,8 @@ import com.hhhirokunnn.classroom_community_server.domain.services.user.UserServi
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.multipart.MultipartFile
+import java.lang.Exception
 import javax.validation.Valid
 
 @RestController
@@ -28,9 +31,20 @@ class ArticleController(
 ) {
 
     @PostMapping("/articles")
-    fun create(@RequestHeader authorization: String,@RequestBody @Valid param: ArticleRegisterParameter): ResponseEntity<ArticleEntity> {
-        TokenService.authenticateToken(authorization)
-        val article = articleService.save(param)
+    fun create(@RequestHeader authorization: String,
+                @RequestParam("article") strJson: String,
+                @RequestParam("image") image: MultipartFile?): ResponseEntity<ArticleEntity> {
+//        TokenService.authenticateToken(authorization)
+
+        val param: ArticleRegisterParameter
+        try {
+            val mapper = jacksonObjectMapper()
+            param = mapper.readValue(strJson)
+        } catch (e: Exception) {
+            throw ArticleParamParseError(error = e)
+        }
+
+        val article = articleService.save(param, image)
 
         return ResponseEntity(article, HttpStatus.OK)
     }
