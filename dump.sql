@@ -15,6 +15,8 @@
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
+GRANT ALL ON classroom_community_dev.* TO user@'%' IDENTIFIED BY 'password';
+
 --
 -- Table structure for table `articles`
 --
@@ -32,8 +34,11 @@ CREATE TABLE `articles` (
   `youtube_link` varchar(100) DEFAULT NULL,
   `created_at` datetime(6) DEFAULT NULL,
   `updated_at` datetime(6) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `user_id` bigint(20) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FK_users_id` (`user_id`),
+  CONSTRAINT `FK_users_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -63,7 +68,7 @@ CREATE TABLE `favorite_articles` (
   KEY `FKl8ophx42qxbnug6qkjwg0o9mj` (`user_id`),
   CONSTRAINT `FKkufmimgq3bou70y1sx68nq4m3` FOREIGN KEY (`article_id`) REFERENCES `articles` (`id`),
   CONSTRAINT `FKl8ophx42qxbnug6qkjwg0o9mj` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -94,7 +99,7 @@ CREATE TABLE `materials` (
   PRIMARY KEY (`id`),
   KEY `FKiu3bn87ci0k6ji4t2qh0b828d` (`article_id`),
   CONSTRAINT `FKiu3bn87ci0k6ji4t2qh0b828d` FOREIGN KEY (`article_id`) REFERENCES `articles` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -123,7 +128,7 @@ CREATE TABLE `steps` (
   PRIMARY KEY (`id`),
   KEY `FKp7fblmu0do4rxqjvyq73x0emy` (`article_id`),
   CONSTRAINT `FKp7fblmu0do4rxqjvyq73x0emy` FOREIGN KEY (`article_id`) REFERENCES `articles` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -160,7 +165,6 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (4,'bbb','aaa','ccc','2020-04-29 21:23:36.696467','2020-04-29 21:23:36.696499'),(8,'ccc','aaa','ccc','2020-04-30 10:59:17.951910','2020-04-30 10:59:17.951924');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -173,4 +177,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-04-30 11:13:42
+-- Dump completed on 2020-05-03 19:54:57
