@@ -44,7 +44,7 @@ class StepController(
                 SuccessResponse(
                         message = "",
                         status = 200,
-                        data = stepService.save(step, image, article.get())),
+                        content = stepService.save(step, image, article.get())),
                 HttpStatus.OK)
     }
 
@@ -58,7 +58,7 @@ class StepController(
             SuccessResponse(
                 message = "",
                 status = 200,
-                data = stepService.findByArticle(articleId)),
+                content = stepService.findByArticle(articleId)),
             HttpStatus.OK)
     }
 }

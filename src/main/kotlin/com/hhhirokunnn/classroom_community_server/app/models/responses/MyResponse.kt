@@ -14,5 +14,5 @@ data class ErrorResponse(
 data class SuccessResponse<T>(
     override val message: String,
     override val status: Int = 200,
-    val data: T
+    val content: T
 ): MyResponse

@@ -4,6 +4,7 @@ import com.auth0.jwt.JWT
 import com.hhhirokunnn.classroom_community_server.app.models.parameters.LoginParameter
 import com.hhhirokunnn.classroom_community_server.app.models.parameters.UserRegisterParameter
 import com.hhhirokunnn.classroom_community_server.app.models.responses.ErrorResponse
+import com.hhhirokunnn.classroom_community_server.app.models.responses.LoginResponse
 import com.hhhirokunnn.classroom_community_server.app.models.responses.MyResponse
 import com.hhhirokunnn.classroom_community_server.app.models.responses.SuccessResponse
 import com.hhhirokunnn.classroom_community_server.app.utils.TokenService
@@ -22,32 +23,37 @@ import javax.validation.Valid
 class UserController(private val userService: UserService) {
 
     @PostMapping("/users")
-    fun create(@RequestBody @Valid param: UserRegisterParameter): ResponseEntity<String> {
+    fun create(@RequestBody @Valid param: UserRegisterParameter): ResponseEntity<MyResponse> {
         val user = userService.save(param)
-        return ResponseEntity(TokenService.createToken(user), HttpStatus.OK)
+        return ResponseEntity(
+            SuccessResponse(
+                message = "登録できました。",
+                content = LoginResponse(TokenService.createToken(user))
+            ), HttpStatus.OK)
     }
 
     @PostMapping("/login")
     fun login(@RequestBody @Valid param: LoginParameter): ResponseEntity<MyResponse> {
         val user = userService.findByMailAndPassword(mail = param.mail, password = param.password)
         user?.let { return ResponseEntity(
-            SuccessResponse<Array<String>>(
+            SuccessResponse(
                 message = "ログインできました。",
-                data = arrayOf()
+                content = LoginResponse(TokenService.createToken(it))
             ),
-            attachAuthToHttpHeader(TokenService.createToken(it)),
+//            attachAuthToHttpHeader(TokenService.createToken(it)),
             HttpStatus.OK)}
 
         return ResponseEntity(
                 ErrorResponse("ログインに失敗しました。"),
                 HttpStatus.UNAUTHORIZED) }
 
+    @CrossOrigin("http://localhost:3000")
     @DeleteMapping("/logout")
     fun logout(): ResponseEntity<MyResponse> =
         ResponseEntity(
             SuccessResponse<Array<String>>(
                 message = "ログアウトできました。",
-                data = arrayOf()),
+                content = arrayOf()),
             HttpStatus.OK)
 
     //FIXME test
@@ -58,9 +64,9 @@ class UserController(private val userService: UserService) {
         return TokenService.identifyToken(authorization, userService)
     }
 
-    private fun attachAuthToHttpHeader(bearerToken: String): HttpHeaders {
-        val responseHttpHeaders = HttpHeaders()
-        responseHttpHeaders.set("authorization", bearerToken)
-        return responseHttpHeaders
-    }
+//    private fun attachAuthToHttpHeader(bearerToken: String): HttpHeaders {
+//        val responseHttpHeaders = HttpHeaders()
+//        responseHttpHeaders.set("authorization", bearerToken)
+//        return responseHttpHeaders
+//    }
 }

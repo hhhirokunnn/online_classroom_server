@@ -31,7 +31,7 @@ class MaterialController(
                 SuccessResponse(
                         message = "",
                         status = 200,
-                        data = materialService.save(param, article.get())),
+                        content = materialService.save(param, article.get())),
                 HttpStatus.OK)
     }
 
@@ -44,7 +44,7 @@ class MaterialController(
             SuccessResponse(
                 message = "",
                 status = 200,
-                data = materialService.findByArticle(articleId)),
+                content = materialService.findByArticle(articleId)),
             HttpStatus.OK)
     }
 }

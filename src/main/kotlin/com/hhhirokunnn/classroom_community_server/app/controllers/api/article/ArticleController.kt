@@ -57,7 +57,7 @@ class ArticleController(
             SuccessResponse(
                 message = "",
                 status = 200,
-                data = articleService.findAll()),
+                content = articleService.findAll()),
             HttpStatus.OK)
     }
 
@@ -78,7 +78,7 @@ class ArticleController(
                 SuccessResponse(
                         message = "",
                         status = 200,
-                        data = favoriteArticles),
+                        content = favoriteArticles),
                 HttpStatus.OK)
     }
 
