@@ -1,9 +1,3 @@
--- MySQL dump 10.13  Distrib 5.7.28, for osx10.14 (x86_64)
---
--- Host: localhost    Database: classroom_community_dev
--- ------------------------------------------------------
--- Server version	5.7.28
-
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
@@ -14,10 +8,6 @@
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---CREATE USER user IDENTIFIED BY 'password';
---create database classroom_community_dev;
---GRANT ALL ON classroom_community_dev.* TO user@'%' IDENTIFIED BY 'password';
 
 USE classroom_community_dev;
 

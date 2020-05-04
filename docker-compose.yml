@@ -21,7 +21,7 @@ services:
     networks:
       - classroom-community-mysql
     environment:
-      MYSQL_ROOT_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: root_password
       MYSQL_DATABASE: classroom_community_dev
       MYSQL_USER: user
       MYSQL_PASSWORD: password
