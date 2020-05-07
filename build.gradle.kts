@@ -28,6 +28,7 @@ dependencies {
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 	implementation(platform("com.amazonaws:aws-java-sdk-bom:1.11.772"))
+//	implementation("commons-fileupload:commons-fileupload:1.4")
 //	implementation("com.amazonaws:aws-java-sdk-s3")
 
 

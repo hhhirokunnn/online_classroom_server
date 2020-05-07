@@ -17,14 +17,13 @@ import java.io.File
 import java.io.FileOutputStream
 import java.time.LocalDateTime
 import java.util.*
-import javax.persistence.Column
 
 @Service
 class ArticleService(private val articleRepository: ArticleRepository,
                      private val favoriteArticleRepository: FavoriteArticleRepository) {
 
-    fun save(article: ArticleRegisterParameter, image: MultipartFile?): ArticleEntity {
-        val fileName = image?.let { uploadFile(it) }
+    fun save(article: ArticleRegisterParameter): ArticleEntity {
+        val fileName = article.image?.let { uploadFile(it) }
         return articleRepository.save(toEntity(article, fileName))
     }
     fun findAll(): List<ArticleEntity> = articleRepository.findAllByOrderByCreatedAtDesc()

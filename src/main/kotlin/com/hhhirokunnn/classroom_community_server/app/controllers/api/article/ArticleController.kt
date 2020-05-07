@@ -16,7 +16,9 @@ import com.hhhirokunnn.classroom_community_server.domain.services.article.Articl
 import com.hhhirokunnn.classroom_community_server.domain.services.favorite_article.FavoriteArticleService
 import com.hhhirokunnn.classroom_community_server.domain.services.user.UserService
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
+import org.springframework.validation.BindingResult
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
 import java.lang.Exception
@@ -30,28 +32,42 @@ class ArticleController(
     private val favoriteArticleService: FavoriteArticleService
 ) {
 
+//    @PostMapping("/articles", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
+    @CrossOrigin
     @PostMapping("/articles")
     fun create(@RequestHeader authorization: String,
-                @RequestParam("article") strJson: String,
-                @RequestParam("image") image: MultipartFile?): ResponseEntity<ArticleEntity> {
-//        TokenService.authenticateToken(authorization)
+                @RequestParam("title") title: String,
+                @RequestParam("summary") summary: String,
+                @RequestParam("userId") userId: Long,
+                @RequestParam("estimatedTime") estimatedTime: Int?,
+                @RequestParam("memberUnit") memberUnit: Int?,
+                @RequestParam("youtubeLink") youtubeLink: String?,
+                @RequestParam("image") image: MultipartFile): ResponseEntity<ArticleEntity> {
+        TokenService.authenticateToken(authorization)
+//        val param: ArticleRegisterParameter
+//        try {
+//            val mapper = jacksonObjectMapper()
+//            param = mapper.readValue(strJson)
+//        } catch (e: Exception) {
+//            throw ArticleParamParseError(error = e)
+//        }
+        val param = ArticleRegisterParameter(
+            title = title,
+            summary = summary,
+            estimatedTime = estimatedTime,
+            memberUnit = memberUnit,
+            youtubeLink = youtubeLink,
+            userId = userId,
+            image = image)
 
-        val param: ArticleRegisterParameter
-        try {
-            val mapper = jacksonObjectMapper()
-            param = mapper.readValue(strJson)
-        } catch (e: Exception) {
-            throw ArticleParamParseError(error = e)
-        }
-
-        val article = articleService.save(param, image)
+        val article = articleService.save(param)
 
         return ResponseEntity(article, HttpStatus.OK)
     }
 
     @GetMapping("/articles")
-    fun findAll(@RequestHeader authorization: String): ResponseEntity<MyResponse> {
-        TokenService.authenticateToken(authorization)
+    fun findAll(): ResponseEntity<MyResponse> {
+//        TokenService.authenticateToken(authorization)
 
         return ResponseEntity(
             SuccessResponse(
