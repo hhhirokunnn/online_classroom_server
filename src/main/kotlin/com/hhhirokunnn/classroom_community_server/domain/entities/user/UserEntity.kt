@@ -26,7 +26,7 @@ data class UserEntity(
 
         @Column(name = "created_at")
         val createdAt: LocalDateTime? = now(),
+
         @Column(name = "updated_at")
         val updatedAt: LocalDateTime? = now()
-
 )

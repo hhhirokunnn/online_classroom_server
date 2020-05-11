@@ -1,11 +1,8 @@
 package com.hhhirokunnn.classroom_community_server.app.controllers.api.article
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
 import com.hhhirokunnn.classroom_community_server.app.models.errors.*
 import com.hhhirokunnn.classroom_community_server.app.models.parameters.ArticleRegisterParameter
 import com.hhhirokunnn.classroom_community_server.app.models.parameters.FavoriteArticleRegisterParameter
-import com.hhhirokunnn.classroom_community_server.app.models.parameters.StepRegisterParameter
 import com.hhhirokunnn.classroom_community_server.app.models.responses.FavoriteArticleResponse
 import com.hhhirokunnn.classroom_community_server.app.models.responses.MyResponse
 import com.hhhirokunnn.classroom_community_server.app.models.responses.SuccessResponse
@@ -19,8 +16,6 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
-import java.lang.Exception
-import javax.validation.Valid
 
 @RestController
 @RequestMapping("/api")
@@ -30,34 +25,42 @@ class ArticleController(
     private val favoriteArticleService: FavoriteArticleService
 ) {
 
+    @CrossOrigin
     @PostMapping("/articles")
     fun create(@RequestHeader authorization: String,
-                @RequestParam("article") strJson: String,
-                @RequestParam("image") image: MultipartFile?): ResponseEntity<ArticleEntity> {
-//        TokenService.authenticateToken(authorization)
+                @RequestParam("title") title: String,
+                @RequestParam("summary") summary: String,
+                @RequestParam("userId") userId: Long,
+                @RequestParam("estimatedTime") estimatedTime: Int?,
+                @RequestParam("memberUnit") memberUnit: Int?,
+                @RequestParam("youtubeLink") youtubeLink: String?,
+                @RequestParam("image") image: MultipartFile): ResponseEntity<ArticleEntity> {
 
-        val param: ArticleRegisterParameter
-        try {
-            val mapper = jacksonObjectMapper()
-            param = mapper.readValue(strJson)
-        } catch (e: Exception) {
-            throw ArticleParamParseError(error = e)
-        }
+        TokenService.authenticateToken(authorization)
 
-        val article = articleService.save(param, image)
+        val param = ArticleRegisterParameter(
+            title = title,
+            summary = summary,
+            estimatedTime = estimatedTime,
+            memberUnit = memberUnit,
+            youtubeLink = youtubeLink,
+            userId = userId,
+            image = image)
+
+        val article = articleService.save(param)
 
         return ResponseEntity(article, HttpStatus.OK)
     }
 
     @GetMapping("/articles")
-    fun findAll(@RequestHeader authorization: String): ResponseEntity<MyResponse> {
-        TokenService.authenticateToken(authorization)
+    fun findAll(@RequestParam from: Int, size: Int = 20): ResponseEntity<MyResponse> {
+//        TokenService.authenticateToken(authorization)
 
         return ResponseEntity(
             SuccessResponse(
                 message = "",
                 status = 200,
-                data = articleService.findAll()),
+                content = articleService.findAll(from, size)),
             HttpStatus.OK)
     }
 
@@ -71,15 +74,15 @@ class ArticleController(
             count = articles.count(),
             articles = articles.map {
                 FavoriteArticleResponse.FavoriteArticle(
-                        id = it.id!!,
-                        title = it.title)})
+                    id = it.id!!,
+                    title = it.title)})
 
         return ResponseEntity(
-                SuccessResponse(
-                        message = "",
-                        status = 200,
-                        data = favoriteArticles),
-                HttpStatus.OK)
+            SuccessResponse(
+                message = "",
+                status = 200,
+                content = favoriteArticles),
+            HttpStatus.OK)
     }
 
     @PostMapping("/markedArticles")

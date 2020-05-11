@@ -4,8 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import javax.validation.constraints.Email
 import javax.validation.constraints.NotBlank
 
-data class LoginParameter (
-
+data class LoginParameter(
         @field:Email(message = "アドレスの形式が正しくありません。")
         @field:NotBlank
         @JsonProperty("mail")

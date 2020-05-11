@@ -28,11 +28,11 @@ class MaterialController(
         if(article.isEmpty) throw ArticleNotFoundError()
 
         return ResponseEntity(
-                SuccessResponse(
-                        message = "",
-                        status = 200,
-                        data = materialService.save(param, article.get())),
-                HttpStatus.OK)
+            SuccessResponse(
+                message = "",
+                status = 200,
+                content = materialService.save(param, article.get())),
+            HttpStatus.OK)
     }
 
     @GetMapping
@@ -44,7 +44,7 @@ class MaterialController(
             SuccessResponse(
                 message = "",
                 status = 200,
-                data = materialService.findByArticle(articleId)),
+                content = materialService.findByArticle(articleId)),
             HttpStatus.OK)
     }
 }

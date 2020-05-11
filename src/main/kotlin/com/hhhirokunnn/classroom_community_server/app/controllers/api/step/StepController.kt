@@ -1,9 +1,6 @@
 package com.hhhirokunnn.classroom_community_server.app.controllers.api.step
 
-import com.fasterxml.jackson.module.kotlin.*
-
 import com.hhhirokunnn.classroom_community_server.app.models.errors.ArticleNotFoundError
-import com.hhhirokunnn.classroom_community_server.app.models.errors.StepParamParseError
 import com.hhhirokunnn.classroom_community_server.app.models.parameters.StepRegisterParameter
 import com.hhhirokunnn.classroom_community_server.app.models.responses.MyResponse
 import com.hhhirokunnn.classroom_community_server.app.models.responses.SuccessResponse
@@ -14,7 +11,6 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
-import java.lang.Exception
 
 @RestController
 @RequestMapping("/api/steps")
@@ -23,42 +19,45 @@ class StepController(
     private val stepService: StepService
 ) {
 
+    //    @PostMapping("/articles", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
+    @CrossOrigin
     @PostMapping("")
     fun create(@RequestHeader authorization: String,
-               @RequestParam("step") strJson: String,
+               @RequestParam("articleId") articleId: Long,
+               @RequestParam("description") description: String,
                @RequestParam("image") image: MultipartFile?): ResponseEntity<MyResponse> {
 
         TokenService.authenticateToken(authorization)
 
-        val step: StepRegisterParameter
-        try {
-            val mapper = jacksonObjectMapper()
-            step = mapper.readValue(strJson)
-        } catch (e: Exception) {
-            throw StepParamParseError(error = e)
-        }
+//        val step: StepRegisterParameter
+//        try {
+//            val mapper = jacksonObjectMapper()
+//            step = mapper.readValue(strJson)
+//        } catch (e: Exception) {
+//            throw StepParamParseError(error = e)
+//        }
+        val step = StepRegisterParameter(
+            articleId = articleId,
+            description = description)
 
         val article = articleService.findById(step.articleId)
         if(article.isEmpty) throw ArticleNotFoundError()
         return ResponseEntity(
-                SuccessResponse(
-                        message = "",
-                        status = 200,
-                        data = stepService.save(step, image, article.get())),
-                HttpStatus.OK)
+            SuccessResponse(
+                message = "",
+                status = 200,
+                content = stepService.save(step, image, article.get())),
+            HttpStatus.OK)
     }
 
     @GetMapping("")
-    fun findById(@RequestHeader authorization: String,
-                 @RequestParam articleId: Long): ResponseEntity<MyResponse> {
-
-        TokenService.authenticateToken(authorization)
+    fun findById(@RequestParam articleId: Long): ResponseEntity<MyResponse> {
 
         return ResponseEntity(
             SuccessResponse(
                 message = "",
                 status = 200,
-                data = stepService.findByArticle(articleId)),
+                content = stepService.findByArticle(articleId)),
             HttpStatus.OK)
     }
 }
