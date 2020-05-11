@@ -1,18 +1,14 @@
 package com.hhhirokunnn.classroom_community_server.app.controllers.api.user
 
-import com.auth0.jwt.JWT
 import com.hhhirokunnn.classroom_community_server.app.models.errors.UserNotFoundError
 import com.hhhirokunnn.classroom_community_server.app.models.parameters.LoginParameter
 import com.hhhirokunnn.classroom_community_server.app.models.parameters.UserRegisterParameter
 import com.hhhirokunnn.classroom_community_server.app.models.responses.*
 import com.hhhirokunnn.classroom_community_server.app.utils.TokenService
-import com.hhhirokunnn.classroom_community_server.domain.entities.user.UserEntity
 import com.hhhirokunnn.classroom_community_server.domain.services.user.UserService
-import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import java.util.*
 import javax.validation.Valid
 
 
