@@ -11,6 +11,8 @@ import com.hhhirokunnn.classroom_community_server.domain.entities.article.Articl
 import com.hhhirokunnn.classroom_community_server.domain.repositories.article.ArticleRepository
 import com.hhhirokunnn.classroom_community_server.domain.repositories.favorite_article.FavoriteArticleRepository
 import org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededException
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import java.io.File
@@ -26,7 +28,7 @@ class ArticleService(private val articleRepository: ArticleRepository,
         val fileName = article.image?.let { uploadFile(it) }
         return articleRepository.save(toEntity(article, fileName))
     }
-    fun findAll(): List<ArticleEntity> = articleRepository.findAllByOrderByCreatedAtDesc()
+    fun findAll(from: Int, size: Int): List<ArticleEntity> = articleRepository.findAllByOrderByCreatedAtDesc(PageRequest.of(from, size))
     fun findById(articleId: Long): Optional<ArticleEntity> = articleRepository.findById(articleId)
 
     fun findAllViaFavoriteArticle(userId: Long): List<ArticleEntity> {

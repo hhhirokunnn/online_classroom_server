@@ -30,6 +30,8 @@ class MySecurityConfig: WebSecurityConfigurerAdapter() {
             .antMatchers(HttpMethod.POST, "/api/steps").permitAll()
             .antMatchers(HttpMethod.GET, "/api/materials").permitAll()
             .antMatchers(HttpMethod.POST, "/api/materials").permitAll()
+            .antMatchers(HttpMethod.GET, "/api/comments").permitAll()
+            .antMatchers(HttpMethod.POST, "/api/comments").permitAll()
             .antMatchers(HttpMethod.POST, "/api/login").permitAll()
             .antMatchers(HttpMethod.DELETE, "/api/logout").permitAll()
             .anyRequest().authenticated()

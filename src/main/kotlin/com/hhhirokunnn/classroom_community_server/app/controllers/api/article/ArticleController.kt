@@ -66,14 +66,14 @@ class ArticleController(
     }
 
     @GetMapping("/articles")
-    fun findAll(): ResponseEntity<MyResponse> {
+    fun findAll(@RequestParam from: Int, size: Int = 20): ResponseEntity<MyResponse> {
 //        TokenService.authenticateToken(authorization)
 
         return ResponseEntity(
             SuccessResponse(
                 message = "",
                 status = 200,
-                content = articleService.findAll()),
+                content = articleService.findAll(from, size)),
             HttpStatus.OK)
     }
 

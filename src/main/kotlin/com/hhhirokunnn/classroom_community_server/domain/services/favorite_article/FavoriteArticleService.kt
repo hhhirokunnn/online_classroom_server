@@ -21,4 +21,8 @@ class FavoriteArticleService(
                 FavoriteArticleEntity(
                     user = user, article = article))
     }
+
+    fun countAmountByArticleId(id: Long): Int = favoriteArticleRepository.countByArticleId(id)
+
+    fun findByUserId(userId: Long): List<FavoriteArticleEntity> = favoriteArticleRepository.findByUserId(userId)
 }
