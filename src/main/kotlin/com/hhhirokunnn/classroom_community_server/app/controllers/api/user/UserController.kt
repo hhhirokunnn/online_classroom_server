@@ -1,12 +1,10 @@
 package com.hhhirokunnn.classroom_community_server.app.controllers.api.user
 
 import com.auth0.jwt.JWT
+import com.hhhirokunnn.classroom_community_server.app.models.errors.UserNotFoundError
 import com.hhhirokunnn.classroom_community_server.app.models.parameters.LoginParameter
 import com.hhhirokunnn.classroom_community_server.app.models.parameters.UserRegisterParameter
-import com.hhhirokunnn.classroom_community_server.app.models.responses.ErrorResponse
-import com.hhhirokunnn.classroom_community_server.app.models.responses.LoginResponse
-import com.hhhirokunnn.classroom_community_server.app.models.responses.MyResponse
-import com.hhhirokunnn.classroom_community_server.app.models.responses.SuccessResponse
+import com.hhhirokunnn.classroom_community_server.app.models.responses.*
 import com.hhhirokunnn.classroom_community_server.app.utils.TokenService
 import com.hhhirokunnn.classroom_community_server.domain.entities.user.UserEntity
 import com.hhhirokunnn.classroom_community_server.domain.services.user.UserService
@@ -58,12 +56,22 @@ class UserController(private val userService: UserService) {
 
     //FIXME test
     @GetMapping("/users")
-    fun find(@RequestHeader authorization: String, @RequestParam mail: String, @RequestParam password: String): Optional<UserEntity> {
+    fun find(@RequestHeader authorization: String): ResponseEntity<MyResponse> {
 
         TokenService.authenticateToken(authorization)
-        return TokenService.identifyToken(authorization, userService)
-    }
 
+        val user = TokenService.identifyToken(authorization, userService)
+
+        if(user.isEmpty) throw UserNotFoundError()
+
+        return ResponseEntity(
+            SuccessResponse(
+            message = "",
+            content = UserResponse(
+                    userName = user.get().name,
+                    mail = user.get().mail)),
+            HttpStatus.OK)
+    }
 //    private fun attachAuthToHttpHeader(bearerToken: String): HttpHeaders {
 //        val responseHttpHeaders = HttpHeaders()
 //        responseHttpHeaders.set("authorization", bearerToken)
