@@ -35,8 +35,8 @@ class GrobalControllerExceptionHandler {
             ErrorResponse(
                 message = "アクセスが集中しています、時間をおいてからアクセスし直してください。",
                 status = 500,
-                error = "Database Error"
-            ), HttpStatus.INTERNAL_SERVER_ERROR)
+                error = "Database Error"),
+            HttpStatus.INTERNAL_SERVER_ERROR)
     }
 
     @ExceptionHandler(JWTError::class)
@@ -57,10 +57,11 @@ class GrobalControllerExceptionHandler {
     @ExceptionHandler(ArticleError::class)
     fun validationError(e: ArticleError): ResponseEntity<ErrorResponse> {
         return ResponseEntity(
-                ErrorResponse(
+            ErrorResponse(
                 message = e.errorMessage,
                 status = 400,
-                error = "BadRequest"), HttpStatus.BAD_REQUEST)
+                error = "BadRequest"),
+            HttpStatus.BAD_REQUEST)
     }
 
 //    @ExceptionHandler(Exception::class)

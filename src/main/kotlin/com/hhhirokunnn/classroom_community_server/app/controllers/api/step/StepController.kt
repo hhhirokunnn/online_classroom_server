@@ -41,18 +41,15 @@ class StepController(
         val article = articleService.findById(step.articleId)
         if(article.isEmpty) throw ArticleNotFoundError()
         return ResponseEntity(
-                SuccessResponse(
-                        message = "",
-                        status = 200,
-                        content = stepService.save(step, image, article.get())),
-                HttpStatus.OK)
+            SuccessResponse(
+                message = "",
+                status = 200,
+                content = stepService.save(step, image, article.get())),
+            HttpStatus.OK)
     }
 
     @GetMapping("")
-    fun findById(@RequestHeader authorization: String,
-                 @RequestParam articleId: Long): ResponseEntity<MyResponse> {
-
-        TokenService.authenticateToken(authorization)
+    fun findById(@RequestParam articleId: Long): ResponseEntity<MyResponse> {
 
         return ResponseEntity(
             SuccessResponse(

@@ -9,7 +9,6 @@ import com.hhhirokunnn.classroom_community_server.app.models.responses.SuccessRe
 import com.hhhirokunnn.classroom_community_server.app.utils.TokenService
 import com.hhhirokunnn.classroom_community_server.domain.services.article.ArticleService
 import com.hhhirokunnn.classroom_community_server.domain.services.comment.CommentService
-import com.hhhirokunnn.classroom_community_server.domain.services.favorite_article.FavoriteArticleService
 import com.hhhirokunnn.classroom_community_server.domain.services.user.UserService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -36,8 +35,8 @@ class CommentController(
                         userName = it.user.name,
                         content = it.content,
                         createdAt = it.createdAt!!
-                    )
-                }), HttpStatus.OK)
+                    )}),
+            HttpStatus.OK)
     }
 
     @PostMapping
@@ -60,6 +59,6 @@ class CommentController(
                     user = user.get(),
                     article = article.get(),
                     content = param.content)),
-                HttpStatus.OK)
+            HttpStatus.OK)
     }
 }

@@ -87,15 +87,15 @@ class ArticleController(
             count = articles.count(),
             articles = articles.map {
                 FavoriteArticleResponse.FavoriteArticle(
-                        id = it.id!!,
-                        title = it.title)})
+                    id = it.id!!,
+                    title = it.title)})
 
         return ResponseEntity(
-                SuccessResponse(
-                        message = "",
-                        status = 200,
-                        content = favoriteArticles),
-                HttpStatus.OK)
+            SuccessResponse(
+                message = "",
+                status = 200,
+                content = favoriteArticles),
+            HttpStatus.OK)
     }
 
     @PostMapping("/markedArticles")
