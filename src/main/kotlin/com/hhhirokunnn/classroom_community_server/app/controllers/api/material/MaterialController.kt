@@ -1,6 +1,5 @@
 package com.hhhirokunnn.classroom_community_server.app.controllers.api.material
 
-import com.hhhirokunnn.classroom_community_server.app.models.errors.ArticleNotFoundError
 import com.hhhirokunnn.classroom_community_server.app.models.parameters.MaterialRegisterParameter
 import com.hhhirokunnn.classroom_community_server.app.models.responses.MyResponse
 import com.hhhirokunnn.classroom_community_server.app.models.responses.SuccessResponse
@@ -25,7 +24,7 @@ class MaterialController(
 
         TokenService.authenticateToken(authorization)
 
-        val article = articleService.findById(param.articleId)
+        val article = articleService.doFindById(param.articleId)
 
         return ResponseEntity(
             SuccessResponse(

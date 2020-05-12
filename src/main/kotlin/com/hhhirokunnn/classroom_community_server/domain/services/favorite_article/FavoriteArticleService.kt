@@ -13,25 +13,27 @@ class FavoriteArticleService(
     private val favoriteArticleRepository: FavoriteArticleRepository,
     private val articleRepository: ArticleRepository) {
 
-    fun save(user: UserEntity, article: ArticleEntity): FavoriteArticleEntity {
-        return favoriteArticleRepository.save(
-            FavoriteArticleEntity(
-                user = user,
-                article = article))
+    fun save(user: UserEntity, article: ArticleEntity): Boolean {
+        favoriteArticleRepository.save(
+                FavoriteArticleEntity(
+                        user = user,
+                        article = article))
+
+        return true
     }
 
     fun findAllArticles(userId: Long): FavoriteArticleResponse {
-        val favoriteArticles = favoriteArticleRepository.findByUserId(userId)
+        val favoriteArticles = favoriteArticleRepository.findByUserIdOrderByCreatedAtDesc(userId)
         val articles = articleRepository.findAllByIdIn(favoriteArticles.map { it.id })
         return FavoriteArticleResponse(
             count = articles.count(),
             articles = articles.map {
                 FavoriteArticleResponse.FavoriteArticle(
-                    id = it.id!!,
+                    articleId = it.id!!,
                     title = it.title)})
     }
 
     fun countAmountByArticleId(id: Long): Int = favoriteArticleRepository.countByArticleId(id)
 
-    fun findByUserId(userId: Long): List<FavoriteArticleEntity> = favoriteArticleRepository.findByUserId(userId)
+    fun findByUserId(userId: Long): List<FavoriteArticleEntity> = favoriteArticleRepository.findByUserIdOrderByCreatedAtDesc(userId)
 }

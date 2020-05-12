@@ -4,7 +4,6 @@ import com.hhhirokunnn.classroom_community_server.app.models.parameters.Favorite
 import com.hhhirokunnn.classroom_community_server.app.models.responses.MyResponse
 import com.hhhirokunnn.classroom_community_server.app.models.responses.SuccessResponse
 import com.hhhirokunnn.classroom_community_server.app.utils.TokenService
-import com.hhhirokunnn.classroom_community_server.domain.entities.favorite_article.FavoriteArticleEntity
 import com.hhhirokunnn.classroom_community_server.domain.services.article.ArticleService
 import com.hhhirokunnn.classroom_community_server.domain.services.favorite_article.FavoriteArticleService
 import com.hhhirokunnn.classroom_community_server.domain.services.user.UserService
@@ -34,13 +33,20 @@ class FavoriteArticleController(
 
     @PostMapping
     fun create(@RequestHeader authorization: String,
-               @RequestBody param: FavoriteArticleRegisterParameter): FavoriteArticleEntity {
+               @RequestBody param: FavoriteArticleRegisterParameter): ResponseEntity<MyResponse> {
 
         TokenService.authenticateToken(authorization)
 
-        val article = articleService.findById(param.articleId)
-        val user = userService.findById(param.userId)
+        val article = articleService.doFindById(param.articleId)
+        val user = userService.doFindById(param.userId)
 
-        return favoriteArticleService.save(user, article)
+        favoriteArticleService.save(user, article)
+
+        return ResponseEntity(
+                SuccessResponse(
+                        message = "お気に入りに登録しました",
+                        status = 200,
+                        content = ""),
+                HttpStatus.OK)
     }
 }

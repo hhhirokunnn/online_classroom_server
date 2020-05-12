@@ -65,4 +65,14 @@ class ArticleController(
                 content = articleService.findAll(from, size)),
             HttpStatus.OK)
     }
+
+    @GetMapping("/{articleId}")
+    fun show(@PathVariable("articleId") articleId: Long): ResponseEntity<MyResponse> {
+        return ResponseEntity(
+            SuccessResponse(
+                message = "",
+                status = 200,
+                content = articleService.findDetailById(articleId)),
+            HttpStatus.OK)
+    }
 }

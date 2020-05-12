@@ -19,6 +19,7 @@ class CommentService(private val commentRepository: CommentRepository) {
                 content = content))
 
         return CommentResponse(
+            id = createdComment.id!!,
             userName = createdComment.user.name,
             content = createdComment.content,
             createdAt = createdComment.createdAt!!)

@@ -54,7 +54,7 @@ object TokenService {
         val token = bearerToken.replaceFirst(TOKEN_PREFIX, "")
 //        FIXME: Error handling
         val userId = JWT.decode(token).getClaim("id").asLong()
-        val user = userService.findById(userId)
+        val user = userService.doFindById(userId)
 
         return UserResponse(
             userName = user.name,

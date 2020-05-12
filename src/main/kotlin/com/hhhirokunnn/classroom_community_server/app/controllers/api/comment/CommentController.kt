@@ -1,7 +1,5 @@
 package com.hhhirokunnn.classroom_community_server.app.controllers.api.comment
 
-import com.hhhirokunnn.classroom_community_server.app.models.errors.ArticleNotFoundError
-import com.hhhirokunnn.classroom_community_server.app.models.errors.UserNotFoundError
 import com.hhhirokunnn.classroom_community_server.app.models.parameters.CommentRegisterParameter
 import com.hhhirokunnn.classroom_community_server.app.models.responses.CommentResponse
 import com.hhhirokunnn.classroom_community_server.app.models.responses.MyResponse
@@ -32,6 +30,7 @@ class CommentController(
                 status = 200,
                 content = comments.map {
                     CommentResponse(
+                        id = it.id!!,
                         userName = it.user.name,
                         content = it.content,
                         createdAt = it.createdAt!!
@@ -45,8 +44,8 @@ class CommentController(
 
         TokenService.authenticateToken(authorization)
 
-        val user = userService.findById(param.userId)
-        val article = articleService.findById(param.articleId)
+        val user = userService.doFindById(param.userId)
+        val article = articleService.doFindById(param.articleId)
 
         return ResponseEntity(
             SuccessResponse(

@@ -1,6 +1,5 @@
 package com.hhhirokunnn.classroom_community_server.app.controllers.api.step
 
-import com.hhhirokunnn.classroom_community_server.app.models.errors.ArticleNotFoundError
 import com.hhhirokunnn.classroom_community_server.app.models.parameters.StepRegisterParameter
 import com.hhhirokunnn.classroom_community_server.app.models.responses.MyResponse
 import com.hhhirokunnn.classroom_community_server.app.models.responses.SuccessResponse
@@ -32,7 +31,7 @@ class StepController(
             articleId = articleId,
             description = description)
 
-        val article = articleService.findById(step.articleId)
+        val article = articleService.doFindById(step.articleId)
 
         return ResponseEntity(
             SuccessResponse(

@@ -7,5 +7,5 @@ import org.springframework.stereotype.Repository
 @Repository
 interface StepRepository: JpaRepository<StepEntity, Long> {
 
-    fun findByArticleId(articleId: Long): List<StepEntity>
+    fun findAllByArticleIdOrderByIdAsc(articleId: Long): List<StepEntity>
 }

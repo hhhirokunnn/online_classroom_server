@@ -23,6 +23,7 @@ class MySecurityConfig: WebSecurityConfigurerAdapter() {
             .antMatchers(HttpMethod.GET, "/api/users").permitAll()
             .antMatchers(HttpMethod.POST, "/api/users").permitAll()
             .antMatchers(HttpMethod.GET, "/api/articles").permitAll()
+            .antMatchers(HttpMethod.GET, "/api/articles/{articleId}").permitAll()
             .antMatchers(HttpMethod.POST, "/api/articles").permitAll()
             .antMatchers(HttpMethod.GET, "/api/markedArticles").permitAll()
             .antMatchers(HttpMethod.POST, "/api/markedArticles").permitAll()
