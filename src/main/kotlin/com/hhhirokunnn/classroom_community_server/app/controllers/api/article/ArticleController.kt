@@ -3,9 +3,11 @@ package com.hhhirokunnn.classroom_community_server.app.controllers.api.article
 import com.hhhirokunnn.classroom_community_server.app.models.errors.*
 import com.hhhirokunnn.classroom_community_server.app.models.parameters.ArticleRegisterParameter
 import com.hhhirokunnn.classroom_community_server.app.models.parameters.FavoriteArticleRegisterParameter
+import com.hhhirokunnn.classroom_community_server.app.models.responses.ErrorResponse
 import com.hhhirokunnn.classroom_community_server.app.models.responses.FavoriteArticleResponse
 import com.hhhirokunnn.classroom_community_server.app.models.responses.MyResponse
 import com.hhhirokunnn.classroom_community_server.app.models.responses.SuccessResponse
+import com.hhhirokunnn.classroom_community_server.app.services.article.ArticleRegisterParameterValidator
 import com.hhhirokunnn.classroom_community_server.app.utils.TokenService
 import com.hhhirokunnn.classroom_community_server.domain.entities.article.ArticleEntity
 import com.hhhirokunnn.classroom_community_server.domain.entities.favorite_article.FavoriteArticleEntity
@@ -28,15 +30,13 @@ class ArticleController(
     @CrossOrigin
     @PostMapping("/articles")
     fun create(@RequestHeader authorization: String,
-                @RequestParam("title") title: String,
-                @RequestParam("summary") summary: String,
-                @RequestParam("userId") userId: Long,
-                @RequestParam("estimatedTime") estimatedTime: Int?,
-                @RequestParam("memberUnit") memberUnit: Int?,
-                @RequestParam("youtubeLink") youtubeLink: String?,
-                @RequestParam("image") image: MultipartFile): ResponseEntity<ArticleEntity> {
-
-        TokenService.authenticateToken(authorization)
+               @RequestParam("title") title: String,
+               @RequestParam("summary") summary: String,
+               @RequestParam("userId") userId: Long,
+               @RequestParam("estimatedTime") estimatedTime: Int?,
+               @RequestParam("memberUnit") memberUnit: Int?,
+               @RequestParam("youtubeLink") youtubeLink: String?,
+               @RequestParam("image") image: MultipartFile?): ResponseEntity<MyResponse> {
 
         val param = ArticleRegisterParameter(
             title = title,
@@ -47,14 +47,16 @@ class ArticleController(
             userId = userId,
             image = image)
 
-        val article = articleService.save(param)
+        val validator = ArticleRegisterParameterValidator(
+                articleService = articleService, token = authorization, param = param)
 
-        return ResponseEntity(article, HttpStatus.OK)
+        val (responseContent, responseStatus) = validator.validate()
+
+        return ResponseEntity(responseContent, responseStatus)
     }
 
     @GetMapping("/articles")
     fun findAll(@RequestParam from: Int, size: Int = 20): ResponseEntity<MyResponse> {
-//        TokenService.authenticateToken(authorization)
 
         return ResponseEntity(
             SuccessResponse(

@@ -28,28 +28,28 @@ class ArticleService(private val articleRepository: ArticleRepository,
         val fileName = article.image?.let { uploadFile(it) }
         return articleRepository.save(toEntity(article, fileName))
     }
-    fun findAll(from: Int, size: Int): List<ArticleEntity> = articleRepository.findAllByOrderByCreatedAtDesc(PageRequest.of(from, size))
-    fun findById(articleId: Long): Optional<ArticleEntity> = articleRepository.findById(articleId)
+
+    fun findAll(from: Int, size: Int): List<ArticleEntity> =
+        articleRepository.findAllByOrderByCreatedAtDesc(PageRequest.of(from, size))
+
+    fun findById(articleId: Long): Optional<ArticleEntity> =
+        articleRepository.findById(articleId)
 
     fun findAllViaFavoriteArticle(userId: Long): List<ArticleEntity> {
         val favoriteArticles = favoriteArticleRepository.findByUserId(userId)
         return articleRepository.findAllByIdIn(favoriteArticles.map { it.id })
     }
-    fun findAllByIdInOrderByCreatedAtDesc(ids: List<Long>): List<ArticleEntity> = articleRepository.findAllByIdInOrderByCreatedAtDesc(ids)
-//    fun queryAll(): List<ArticleEntity> = articleRepository.queryAll()
-//    fun findAllByIdIn(): List<ArticleEntity> = articleRepository.findAllByIdIn(listOf(1,2,3))
-//    fun findAllByOrderByCreatedAtDesc(): List<ArticleEntity> = articleRepository.findAllByOrderByCreatedAtDesc()
 
-
-    private fun toEntity(article: ArticleRegisterParameter, image: String?) = ArticleEntity(
-        title = article.title,
-        summary = article.summary,
-        estimatedTime = article.estimatedTime,
-        memberUnit = article.memberUnit,
-        image = image,
-        youtubeLink = article.youtubeLink,
-        userId = article.userId
-    )
+    private fun toEntity(article: ArticleRegisterParameter, image: String?) =
+        ArticleEntity(
+            title = article.title,
+            summary = article.summary,
+            estimatedTime = article.estimatedTime,
+            memberUnit = article.memberUnit,
+            image = image,
+            youtubeLink = article.youtubeLink,
+            userId = article.userId
+        )
 
     private fun uploadFile(image: MultipartFile): String {
         val fileName = toFileName()

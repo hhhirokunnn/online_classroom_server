@@ -21,7 +21,7 @@ object TokenService {
     private val algorithm: Algorithm = Algorithm.HMAC256(PRIVATE_KEY)
 
     fun authenticateToken(bearerToken : String){
-        if (!bearerToken.startsWith(TOKEN_PREFIX)) throw NoBearerError(error = AuthenticateError())
+        if (!bearerToken.startsWith(TOKEN_PREFIX)) throw NoBearerError()
 
         try {
             val verifier = JWT.require(algorithm).withIssuer("auth0").build()
@@ -38,7 +38,7 @@ object TokenService {
         lateinit var token : String
         try {
             val calendar = Calendar.getInstance()
-            calendar.setTime(Date())
+            calendar.time = Date()
             calendar.add(Calendar.SECOND, 300)
             val expireTime = calendar.time
             token = JWT.create()
