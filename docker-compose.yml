@@ -3,35 +3,35 @@ services:
   classroom-community:
     container_name: classroom-community
     build: ./docker/web
-    depends_on:
-      - dbserver
+#    depends_on:
+#      - dbserver
     ports:
       - "8080:8080"
     volumes:
       - ./:/var/www/app
-    networks:
-      - classroom-community-mysql
+#    networks:
+#      - classroom-community-mysql
     working_dir: /var/www/app
     tty: true
     command: sh -c "./gradlew build -x test && java -jar -Dspring.profiles.active=docker-compose ./build/libs/classroom_community_server-0.0.1-SNAPSHOT.jar"
 
-  dbserver:
-    image: mysql:5.7
-    container_name: classroom-community-db
-    networks:
-      - classroom-community-mysql
-    environment:
-      MYSQL_ROOT_PASSWORD: root_password
-      MYSQL_DATABASE: classroom_community_dev
-      MYSQL_USER: user
-      MYSQL_PASSWORD: password
+#  dbserver:
+#    image: mysql:5.7
+#    container_name: classroom-community-db
+#    networks:
+#      - classroom-community-mysql
+#    environment:
+#      MYSQL_ROOT_PASSWORD: root_password
+#      MYSQL_DATABASE: classroom_community_dev
+#      MYSQL_USER: user
+#      MYSQL_PASSWORD: password
 #    expose:
 #      - 3306
-    ports:
-      - "3306:3306"
-    volumes:
+#    ports:
+#      - "3306:3306"
+#    volumes:
       # 起動スクリプト
-      - ./docker/mysql/initdb:/docker-entrypoint-initdb.d
+#      - ./docker/mysql/initdb:/docker-entrypoint-initdb.d
       # MySQLの設定ファイル
 #      - ./docker/mysql/config:/etc/mysql/conf.d
 #      # DBの永続化
@@ -42,5 +42,5 @@ services:
 #  mysql_db:
 #    driver: local
 
-networks:
-  classroom-community-mysql:
+#networks:
+#  classroom-community-mysql:
