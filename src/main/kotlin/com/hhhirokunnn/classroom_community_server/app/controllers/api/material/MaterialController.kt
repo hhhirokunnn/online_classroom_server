@@ -22,6 +22,7 @@ class MaterialController(
     @PostMapping
     fun create(@RequestHeader authorization: String,
                @RequestBody @Valid param: MaterialRegisterParameter): ResponseEntity<MyResponse> {
+
         TokenService.authenticateToken(authorization)
 
         val article = articleService.findById(param.articleId)
@@ -35,9 +36,8 @@ class MaterialController(
     }
 
     @GetMapping
-    fun findByArticle(@RequestHeader authorization: String,
-                      @RequestParam articleId: Long): ResponseEntity<MyResponse> {
-        TokenService.authenticateToken(authorization)
+    fun find(@RequestHeader authorization: String,
+             @RequestParam articleId: Long): ResponseEntity<MyResponse> {
 
         return ResponseEntity(
             SuccessResponse(

@@ -19,9 +19,8 @@ class StepController(
     private val stepService: StepService
 ) {
 
-    //    @PostMapping("/articles", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
     @CrossOrigin
-    @PostMapping("")
+    @PostMapping
     fun create(@RequestHeader authorization: String,
                @RequestParam("articleId") articleId: Long,
                @RequestParam("description") description: String,
@@ -29,13 +28,6 @@ class StepController(
 
         TokenService.authenticateToken(authorization)
 
-//        val step: StepRegisterParameter
-//        try {
-//            val mapper = jacksonObjectMapper()
-//            step = mapper.readValue(strJson)
-//        } catch (e: Exception) {
-//            throw StepParamParseError(error = e)
-//        }
         val step = StepRegisterParameter(
             articleId = articleId,
             description = description)
@@ -50,8 +42,8 @@ class StepController(
             HttpStatus.OK)
     }
 
-    @GetMapping("")
-    fun findById(@RequestParam articleId: Long): ResponseEntity<MyResponse> {
+    @GetMapping
+    fun find(@RequestParam articleId: Long): ResponseEntity<MyResponse> {
 
         return ResponseEntity(
             SuccessResponse(

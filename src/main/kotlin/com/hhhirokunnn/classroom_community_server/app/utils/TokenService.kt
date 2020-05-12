@@ -7,6 +7,7 @@ import com.auth0.jwt.exceptions.JWTVerificationException
 import com.hhhirokunnn.classroom_community_server.app.models.errors.JWTTokenError
 import com.hhhirokunnn.classroom_community_server.app.models.errors.NoBearerError
 import com.hhhirokunnn.classroom_community_server.app.models.errors.TokenCreateError
+import com.hhhirokunnn.classroom_community_server.app.models.responses.UserResponse
 import com.hhhirokunnn.classroom_community_server.domain.entities.user.UserEntity
 import com.hhhirokunnn.classroom_community_server.domain.services.user.UserService
 import java.util.*
@@ -49,11 +50,14 @@ object TokenService {
         return TOKEN_PREFIX + token
     }
 
-    fun identifyToken(bearerToken: String, userService: UserService): UserEntity {
+    fun identifyToken(bearerToken: String, userService: UserService): UserResponse {
         val token = bearerToken.replaceFirst(TOKEN_PREFIX, "")
-        val decodedToken = JWT.decode(token)
-        val userId = decodedToken.getClaim("id").asLong()
+//        FIXME: Error handling
+        val userId = JWT.decode(token).getClaim("id").asLong()
+        val user = userService.findById(userId)
 
-        return userService.findById(userId)
+        return UserResponse(
+            userName = user.name,
+            mail = user.mail)
     }
 }

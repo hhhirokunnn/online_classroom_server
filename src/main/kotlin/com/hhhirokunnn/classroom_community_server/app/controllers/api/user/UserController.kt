@@ -31,20 +31,18 @@ class UserController(private val userService: UserService) {
 
         TokenService.authenticateToken(authorization)
 
-        val user = try {
+        val userResponse = try {
             TokenService.identifyToken(authorization, userService)
         } catch (e: UserNotFoundError) {
             return ResponseEntity(
-                    ErrorResponse(message = ""),
-                    HttpStatus.OK)
+                SuccessResponse(message = "", content = ""),
+                HttpStatus.OK)
         }
 
         return ResponseEntity(
             SuccessResponse(
                 message = "",
-                content = UserResponse(
-                    userName = user.name,
-                    mail = user.mail)),
+                content = userResponse),
             HttpStatus.OK)
     }
 
@@ -63,7 +61,6 @@ class UserController(private val userService: UserService) {
                 ErrorResponse("ログインに失敗しました。"),
                 HttpStatus.UNAUTHORIZED) }
 
-    @CrossOrigin("http://localhost:3000")
     @DeleteMapping("/logout")
     fun logout(): ResponseEntity<MyResponse> =
         ResponseEntity(

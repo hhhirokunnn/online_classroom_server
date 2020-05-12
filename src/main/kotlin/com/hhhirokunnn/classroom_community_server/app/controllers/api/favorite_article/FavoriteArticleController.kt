@@ -1,9 +1,6 @@
 package com.hhhirokunnn.classroom_community_server.app.controllers.api.favorite_article
 
-import com.hhhirokunnn.classroom_community_server.app.models.errors.ArticleNotFoundError
-import com.hhhirokunnn.classroom_community_server.app.models.errors.UserNotFoundError
 import com.hhhirokunnn.classroom_community_server.app.models.parameters.FavoriteArticleRegisterParameter
-import com.hhhirokunnn.classroom_community_server.app.models.responses.FavoriteArticleResponse
 import com.hhhirokunnn.classroom_community_server.app.models.responses.MyResponse
 import com.hhhirokunnn.classroom_community_server.app.models.responses.SuccessResponse
 import com.hhhirokunnn.classroom_community_server.app.utils.TokenService
