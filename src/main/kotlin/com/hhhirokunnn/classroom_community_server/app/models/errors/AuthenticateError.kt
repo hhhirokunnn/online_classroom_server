@@ -9,3 +9,7 @@ class NoHeaderParameterError(
 
 class NoBearerError(
     override val reason: String = "リクエストが正しくありません。"): AuthenticateError()
+
+class JWTTokenError(
+    override val reason: String = "トークンが正しくありません。",
+    val error: Exception): AuthenticateError()

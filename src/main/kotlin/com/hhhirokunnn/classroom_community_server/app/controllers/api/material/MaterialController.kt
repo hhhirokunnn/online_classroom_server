@@ -25,13 +25,12 @@ class MaterialController(
         TokenService.authenticateToken(authorization)
 
         val article = articleService.findById(param.articleId)
-        if(article.isEmpty) throw ArticleNotFoundError()
 
         return ResponseEntity(
             SuccessResponse(
                 message = "",
                 status = 200,
-                content = materialService.save(param, article.get())),
+                content = materialService.save(param, article)),
             HttpStatus.OK)
     }
 

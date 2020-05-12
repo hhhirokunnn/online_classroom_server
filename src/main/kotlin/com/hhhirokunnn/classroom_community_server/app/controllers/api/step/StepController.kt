@@ -41,12 +41,12 @@ class StepController(
             description = description)
 
         val article = articleService.findById(step.articleId)
-        if(article.isEmpty) throw ArticleNotFoundError()
+
         return ResponseEntity(
             SuccessResponse(
                 message = "",
                 status = 200,
-                content = stepService.save(step, image, article.get())),
+                content = stepService.save(step, image, article)),
             HttpStatus.OK)
     }
 

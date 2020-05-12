@@ -4,6 +4,7 @@ import com.amazonaws.auth.AWSStaticCredentialsProvider
 import com.amazonaws.auth.BasicAWSCredentials
 import com.amazonaws.services.s3.AmazonS3ClientBuilder
 import com.amazonaws.services.s3.model.PutObjectRequest
+import com.hhhirokunnn.classroom_community_server.app.models.errors.ArticleNotFoundError
 import com.hhhirokunnn.classroom_community_server.app.models.errors.AwsS3UploadError
 import com.hhhirokunnn.classroom_community_server.app.models.errors.FileSizeExceededError
 import com.hhhirokunnn.classroom_community_server.app.models.parameters.ArticleRegisterParameter
@@ -32,13 +33,8 @@ class ArticleService(private val articleRepository: ArticleRepository,
     fun findAll(from: Int, size: Int): List<ArticleEntity> =
         articleRepository.findAllByOrderByCreatedAtDesc(PageRequest.of(from, size))
 
-    fun findById(articleId: Long): Optional<ArticleEntity> =
-        articleRepository.findById(articleId)
-
-    fun findAllViaFavoriteArticle(userId: Long): List<ArticleEntity> {
-        val favoriteArticles = favoriteArticleRepository.findByUserId(userId)
-        return articleRepository.findAllByIdIn(favoriteArticles.map { it.id })
-    }
+    fun findById(articleId: Long): ArticleEntity =
+        articleRepository.findById(articleId).orElseThrow{ ArticleNotFoundError() }
 
     private fun toEntity(article: ArticleRegisterParameter, image: String?) =
         ArticleEntity(

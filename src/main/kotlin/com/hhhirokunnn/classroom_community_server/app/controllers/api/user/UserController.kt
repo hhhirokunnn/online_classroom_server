@@ -26,6 +26,28 @@ class UserController(private val userService: UserService) {
             ), HttpStatus.OK)
     }
 
+    @GetMapping("/users")
+    fun find(@RequestHeader authorization: String): ResponseEntity<MyResponse> {
+
+        TokenService.authenticateToken(authorization)
+
+        val user = try {
+            TokenService.identifyToken(authorization, userService)
+        } catch (e: UserNotFoundError) {
+            return ResponseEntity(
+                    ErrorResponse(message = ""),
+                    HttpStatus.OK)
+        }
+
+        return ResponseEntity(
+            SuccessResponse(
+                message = "",
+                content = UserResponse(
+                    userName = user.name,
+                    mail = user.mail)),
+            HttpStatus.OK)
+    }
+
     @PostMapping("/login")
     fun login(@RequestBody @Valid param: LoginParameter): ResponseEntity<MyResponse> {
         val user = userService.findByMailAndPassword(mail = param.mail, password = param.password)
@@ -45,29 +67,11 @@ class UserController(private val userService: UserService) {
     @DeleteMapping("/logout")
     fun logout(): ResponseEntity<MyResponse> =
         ResponseEntity(
-            SuccessResponse<Array<String>>(
-                message = "ログアウトできました。",
-                content = arrayOf()),
-            HttpStatus.OK)
-
-    //FIXME test
-    @GetMapping("/users")
-    fun find(@RequestHeader authorization: String): ResponseEntity<MyResponse> {
-
-        TokenService.authenticateToken(authorization)
-
-        val user = TokenService.identifyToken(authorization, userService)
-
-        if(user.isEmpty) throw UserNotFoundError()
-
-        return ResponseEntity(
             SuccessResponse(
-            message = "",
-            content = UserResponse(
-                    userName = user.get().name,
-                    mail = user.get().mail)),
+                message = "ログアウトできました。",
+                content = ""),
             HttpStatus.OK)
-    }
+
 //    private fun attachAuthToHttpHeader(bearerToken: String): HttpHeaders {
 //        val responseHttpHeaders = HttpHeaders()
 //        responseHttpHeaders.set("authorization", bearerToken)

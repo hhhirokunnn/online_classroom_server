@@ -1,8 +1,6 @@
 package com.hhhirokunnn.classroom_community_server.app.services.article
 
 import com.hhhirokunnn.classroom_community_server.app.models.errors.ArticleRegisterParameterError
-import com.hhhirokunnn.classroom_community_server.app.models.errors.AuthenticateError
-import com.hhhirokunnn.classroom_community_server.app.models.errors.JWTTokenError
 import com.hhhirokunnn.classroom_community_server.app.models.parameters.ArticleRegisterParameter
 import com.hhhirokunnn.classroom_community_server.app.models.responses.ErrorResponse
 import com.hhhirokunnn.classroom_community_server.app.models.responses.MyResponse
@@ -31,16 +29,5 @@ class ArticleRegisterParameterValidator(
                 status = 400,
                 error = e.toString()),
              HttpStatus.BAD_REQUEST)
-    } catch (e: JWTTokenError) {
-        Pair(ErrorResponse(
-                message = e.errorMessage,
-                status = 400,
-                error = e.toString()),
-             HttpStatus.BAD_REQUEST)
-    } catch (e: AuthenticateError) {
-        Pair(ErrorResponse(
-                message = e.reason,
-                status = 400,
-                error = e.toString()),
-             HttpStatus.BAD_REQUEST)}
+    }
 }

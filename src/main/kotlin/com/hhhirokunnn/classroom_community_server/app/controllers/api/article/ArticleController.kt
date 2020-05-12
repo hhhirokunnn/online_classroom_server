@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/articles")
 class ArticleController(
     private val articleService: ArticleService,
     private val userService: UserService,
@@ -28,7 +28,7 @@ class ArticleController(
 ) {
 
     @CrossOrigin
-    @PostMapping("/articles")
+    @PostMapping
     fun create(@RequestHeader authorization: String,
                @RequestParam("title") title: String,
                @RequestParam("summary") summary: String,
@@ -55,7 +55,7 @@ class ArticleController(
         return ResponseEntity(responseContent, responseStatus)
     }
 
-    @GetMapping("/articles")
+    @GetMapping
     fun findAll(@RequestParam from: Int, size: Int = 20): ResponseEntity<MyResponse> {
 
         return ResponseEntity(
@@ -64,39 +64,5 @@ class ArticleController(
                 status = 200,
                 content = articleService.findAll(from, size)),
             HttpStatus.OK)
-    }
-
-    @GetMapping("/markedArticles")
-    fun findFavoriteArticles(@RequestHeader authorization: String, @RequestParam userId: Long): ResponseEntity<MyResponse> {
-
-        TokenService.authenticateToken(authorization)
-
-        val articles = articleService.findAllViaFavoriteArticle(userId)
-        val favoriteArticles = FavoriteArticleResponse(
-            count = articles.count(),
-            articles = articles.map {
-                FavoriteArticleResponse.FavoriteArticle(
-                    id = it.id!!,
-                    title = it.title)})
-
-        return ResponseEntity(
-            SuccessResponse(
-                message = "",
-                status = 200,
-                content = favoriteArticles),
-            HttpStatus.OK)
-    }
-
-    @PostMapping("/markedArticles")
-    fun createMarkedArticle(
-            @RequestHeader authorization: String,
-            @RequestBody param: FavoriteArticleRegisterParameter): FavoriteArticleEntity {
-        val article = articleService.findById(param.articleId)
-        val user = userService.findById(param.userId)
-
-        if(user.isEmpty) throw UserNotFoundError()
-        if(article.isEmpty) throw ArticleNotFoundError()
-
-        return favoriteArticleService.save(user.get(), article.get())
     }
 }

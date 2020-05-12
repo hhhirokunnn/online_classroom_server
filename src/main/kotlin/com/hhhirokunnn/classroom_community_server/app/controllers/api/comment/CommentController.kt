@@ -48,16 +48,13 @@ class CommentController(
         val user = userService.findById(param.userId)
         val article = articleService.findById(param.articleId)
 
-        if(user.isEmpty) throw UserNotFoundError()
-        if(article.isEmpty) throw ArticleNotFoundError()
-
         return ResponseEntity(
             SuccessResponse(
                 message = "",
                 status = 200,
                 content = commentService.save(
-                    user = user.get(),
-                    article = article.get(),
+                    user = user,
+                    article = article,
                     content = param.content)),
             HttpStatus.OK)
     }
