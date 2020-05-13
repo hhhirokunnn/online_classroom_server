@@ -7,10 +7,6 @@ import javax.validation.constraints.NotBlank
 data class CommentRegisterParameter(
 
     @field:NotBlank
-    @JsonProperty("userId")
-    val userId: Long,
-
-    @field:NotBlank
     @JsonProperty("articleId")
     val articleId: Long,
 

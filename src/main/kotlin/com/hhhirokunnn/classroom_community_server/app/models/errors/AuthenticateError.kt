@@ -1,11 +1,15 @@
 package com.hhhirokunnn.classroom_community_server.app.models.errors
 
-open class AuthenticateError: Exception()
+sealed class AuthenticateError: Exception() {
+    abstract val reason: String
+}
 
-data class NoHeaderParameterError(
-        val errorMessage: String = "リクエストが正しくありません。",
-        val error: Exception): AuthenticateError()
+class NoHeaderParameterError(
+    override val reason: String = "リクエストが正しくありません。"): AuthenticateError()
 
-data class NoBearerError(
-        val errorMessage: String = "リクエストが正しくありません。",
-        val error: Exception): AuthenticateError()
+class NoBearerError(
+    override val reason: String = "リクエストが正しくありません。"): AuthenticateError()
+
+class JWTTokenError(
+    override val reason: String = "トークンが正しくありません。",
+    val error: Exception): AuthenticateError()

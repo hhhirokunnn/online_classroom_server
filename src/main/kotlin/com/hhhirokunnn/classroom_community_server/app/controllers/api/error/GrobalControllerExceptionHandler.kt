@@ -1,8 +1,6 @@
 package com.hhhirokunnn.classroom_community_server.app.controllers.api.error
 
-import com.hhhirokunnn.classroom_community_server.app.models.errors.ArticleError
-import com.hhhirokunnn.classroom_community_server.app.models.errors.AuthenticateError
-import com.hhhirokunnn.classroom_community_server.app.models.errors.JWTError
+import com.hhhirokunnn.classroom_community_server.app.models.errors.*
 import com.hhhirokunnn.classroom_community_server.app.models.responses.ErrorResponse
 import org.springframework.dao.DataAccessException
 import org.springframework.dao.DataIntegrityViolationException
@@ -21,9 +19,9 @@ class GrobalControllerExceptionHandler {
     fun conflict(): ResponseEntity<ErrorResponse> {
         return ResponseEntity(
             ErrorResponse(
-                message = "登録情報が不適切です。",
+                message = "登録情報が不適切です",
                 status = 409,
-                error = "Conflict"),
+                error = DataIntegrityViolationException::class.toString()),
             HttpStatus.CONFLICT)
     }
 
@@ -31,25 +29,47 @@ class GrobalControllerExceptionHandler {
     fun databaseError(): ResponseEntity<ErrorResponse> {
         return ResponseEntity(
             ErrorResponse(
-                message = "アクセスが集中しています、時間をおいてからアクセスし直してください。",
+                message = "アクセスが集中しています、時間をおいてからアクセスし直してください",
                 status = 500,
                 error = "Database Error"),
             HttpStatus.INTERNAL_SERVER_ERROR)
     }
 
-    @ExceptionHandler(JWTError::class)
-    fun tokenError(): ResponseEntity<ErrorResponse> {
-        return ResponseEntity(ErrorResponse("ログインし直してください。"), HttpStatus.UNAUTHORIZED)
-    }
+//    @ExceptionHandler(JWTError::class)
+//    fun tokenError(): ResponseEntity<ErrorResponse> {
+//        return ResponseEntity(
+//            ErrorResponse(
+//                message = "ログインし直してください",
+//                error = JWTError::class.toString()),
+//            HttpStatus.UNAUTHORIZED)
+//    }
 
     @ExceptionHandler(AuthenticateError::class)
     fun authenticateError(): ResponseEntity<ErrorResponse> {
-        return ResponseEntity(ErrorResponse("リクエストが不正です。"), HttpStatus.BAD_REQUEST)
+        return ResponseEntity(
+            ErrorResponse(
+                message = "ログインし直してください",
+                error = AuthenticateError::class.toString()),
+            HttpStatus.UNAUTHORIZED)
     }
 
     @ExceptionHandler(MethodArgumentNotValidException::class)
     fun validationError(e: MethodArgumentNotValidException): ResponseEntity<ErrorResponse> {
-        return ResponseEntity(ErrorResponse(e.bindingResult.allErrors.map { error -> error.defaultMessage}.toString()), HttpStatus.UNAUTHORIZED)
+        return ResponseEntity(
+            ErrorResponse(
+                message = e.bindingResult.allErrors.map { error -> error.defaultMessage}.toString(),
+                error = "Validation Error"),
+            HttpStatus.UNAUTHORIZED)
+    }
+
+    @ExceptionHandler(CommentError::class)
+    fun validationError(e: CommentError): ResponseEntity<ErrorResponse> {
+        return ResponseEntity(
+                ErrorResponse(
+                        message = e.errorMessage,
+                        status = 400,
+                        error = "BadRequest"),
+                HttpStatus.BAD_REQUEST)
     }
 
     @ExceptionHandler(ArticleError::class)
@@ -60,6 +80,16 @@ class GrobalControllerExceptionHandler {
                 status = 400,
                 error = "BadRequest"),
             HttpStatus.BAD_REQUEST)
+    }
+
+    @ExceptionHandler(UserError::class)
+    fun validationError(e: UserError): ResponseEntity<ErrorResponse> {
+        return ResponseEntity(
+                ErrorResponse(
+                        message = e.errorMessage,
+                        status = 400,
+                        error = "BadRequest"),
+                HttpStatus.BAD_REQUEST)
     }
 
 //    @ExceptionHandler(Exception::class)

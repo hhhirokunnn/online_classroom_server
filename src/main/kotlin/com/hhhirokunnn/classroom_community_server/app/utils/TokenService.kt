@@ -1,17 +1,15 @@
 package com.hhhirokunnn.classroom_community_server.app.utils
 
 import com.auth0.jwt.JWT
-import com.auth0.jwt.JWTVerifier
 import com.auth0.jwt.algorithms.Algorithm
 import com.auth0.jwt.exceptions.JWTCreationException
 import com.auth0.jwt.exceptions.JWTVerificationException
-import com.hhhirokunnn.classroom_community_server.app.models.errors.AuthenticateError
 import com.hhhirokunnn.classroom_community_server.app.models.errors.JWTTokenError
 import com.hhhirokunnn.classroom_community_server.app.models.errors.NoBearerError
 import com.hhhirokunnn.classroom_community_server.app.models.errors.TokenCreateError
+import com.hhhirokunnn.classroom_community_server.app.models.responses.UserResponse
 import com.hhhirokunnn.classroom_community_server.domain.entities.user.UserEntity
 import com.hhhirokunnn.classroom_community_server.domain.services.user.UserService
-import org.springframework.beans.factory.annotation.Autowired
 import java.util.*
 
 object TokenService {
@@ -21,8 +19,7 @@ object TokenService {
     private val algorithm: Algorithm = Algorithm.HMAC256(PRIVATE_KEY)
 
     fun authenticateToken(bearerToken : String){
-        if (!bearerToken.startsWith(TOKEN_PREFIX)) throw NoBearerError(error = AuthenticateError())
-
+        if (!bearerToken.startsWith(TOKEN_PREFIX)) throw NoBearerError()
         try {
             val verifier = JWT.require(algorithm).withIssuer("auth0").build()
             val token = bearerToken.replaceFirst(TOKEN_PREFIX, "")
@@ -38,7 +35,7 @@ object TokenService {
         lateinit var token : String
         try {
             val calendar = Calendar.getInstance()
-            calendar.setTime(Date())
+            calendar.time = Date()
             calendar.add(Calendar.SECOND, 300)
             val expireTime = calendar.time
             token = JWT.create()
@@ -53,11 +50,11 @@ object TokenService {
         return TOKEN_PREFIX + token
     }
 
-    fun identifyToken(bearerToken: String, userService: UserService): Optional<UserEntity> {
+    fun doIdentifyToken(bearerToken: String, userService: UserService): UserEntity {
         val token = bearerToken.replaceFirst(TOKEN_PREFIX, "")
-        val decodedToken = JWT.decode(token)
-        val userId = decodedToken.getClaim("id").asLong()
+//        FIXME: Error handling
+        val userId = JWT.decode(token).getClaim("id").asLong()
 
-        return userService.findById(userId)
+        return userService.doFindById(userId)
     }
 }

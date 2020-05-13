@@ -1,9 +1,9 @@
 package com.hhhirokunnn.classroom_community_server.app.controllers.api.comment
 
-import com.hhhirokunnn.classroom_community_server.app.models.errors.ArticleNotFoundError
-import com.hhhirokunnn.classroom_community_server.app.models.errors.UserNotFoundError
+import com.hhhirokunnn.classroom_community_server.app.models.errors.CommentError
 import com.hhhirokunnn.classroom_community_server.app.models.parameters.CommentRegisterParameter
 import com.hhhirokunnn.classroom_community_server.app.models.responses.CommentResponse
+import com.hhhirokunnn.classroom_community_server.app.models.responses.ErrorResponse
 import com.hhhirokunnn.classroom_community_server.app.models.responses.MyResponse
 import com.hhhirokunnn.classroom_community_server.app.models.responses.SuccessResponse
 import com.hhhirokunnn.classroom_community_server.app.utils.TokenService
@@ -32,6 +32,7 @@ class CommentController(
                 status = 200,
                 content = comments.map {
                     CommentResponse(
+                        id = it.id!!,
                         userName = it.user.name,
                         content = it.content,
                         createdAt = it.createdAt!!
@@ -45,20 +46,45 @@ class CommentController(
 
         TokenService.authenticateToken(authorization)
 
-        val user = userService.findById(param.userId)
-        val article = articleService.findById(param.articleId)
-
-        if(user.isEmpty) throw UserNotFoundError()
-        if(article.isEmpty) throw ArticleNotFoundError()
+        val user = TokenService.doIdentifyToken(authorization, userService)
+        val article = articleService.doFindById(param.articleId)
 
         return ResponseEntity(
             SuccessResponse(
                 message = "",
                 status = 200,
                 content = commentService.save(
-                    user = user.get(),
-                    article = article.get(),
+                    user = user,
+                    article = article,
                     content = param.content)),
             HttpStatus.OK)
+    }
+
+    @DeleteMapping("/{commentId}")
+    fun delete(@RequestHeader authorization: String,
+               @PathVariable("commentId") commentId: Long): ResponseEntity<MyResponse> {
+
+        TokenService.authenticateToken(authorization)
+
+        val user = TokenService.doIdentifyToken(authorization, userService)
+
+        return try {
+            commentService.delete(userId = user.id!!, commentId = commentId)
+            ResponseEntity(SuccessResponse(message = "削除しました", status = 200, content = ""), HttpStatus.OK)
+        } catch (e: CommentError) {
+            ResponseEntity(
+                    ErrorResponse(
+                            message = "削除に失敗しました",
+                            status = 400,
+                            error = e.toString()),
+                    HttpStatus.BAD_REQUEST)
+        } catch (e: Exception) {
+            ResponseEntity(
+                    ErrorResponse(
+                            message = "削除に失敗しました",
+                            status = 500,
+                            error = "Unknown"),
+                    HttpStatus.INTERNAL_SERVER_ERROR)
+        }
     }
 }
