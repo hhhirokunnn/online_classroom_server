@@ -1,8 +1,6 @@
 package com.hhhirokunnn.classroom_community_server.app.controllers.api.error
 
-import com.hhhirokunnn.classroom_community_server.app.models.errors.ArticleError
-import com.hhhirokunnn.classroom_community_server.app.models.errors.AuthenticateError
-import com.hhhirokunnn.classroom_community_server.app.models.errors.JWTError
+import com.hhhirokunnn.classroom_community_server.app.models.errors.*
 import com.hhhirokunnn.classroom_community_server.app.models.responses.ErrorResponse
 import org.springframework.dao.DataAccessException
 import org.springframework.dao.DataIntegrityViolationException
@@ -64,6 +62,16 @@ class GrobalControllerExceptionHandler {
             HttpStatus.UNAUTHORIZED)
     }
 
+    @ExceptionHandler(CommentError::class)
+    fun validationError(e: CommentError): ResponseEntity<ErrorResponse> {
+        return ResponseEntity(
+                ErrorResponse(
+                        message = e.errorMessage,
+                        status = 400,
+                        error = "BadRequest"),
+                HttpStatus.BAD_REQUEST)
+    }
+
     @ExceptionHandler(ArticleError::class)
     fun validationError(e: ArticleError): ResponseEntity<ErrorResponse> {
         return ResponseEntity(
@@ -72,6 +80,16 @@ class GrobalControllerExceptionHandler {
                 status = 400,
                 error = "BadRequest"),
             HttpStatus.BAD_REQUEST)
+    }
+
+    @ExceptionHandler(UserError::class)
+    fun validationError(e: UserError): ResponseEntity<ErrorResponse> {
+        return ResponseEntity(
+                ErrorResponse(
+                        message = e.errorMessage,
+                        status = 400,
+                        error = "BadRequest"),
+                HttpStatus.BAD_REQUEST)
     }
 
 //    @ExceptionHandler(Exception::class)
