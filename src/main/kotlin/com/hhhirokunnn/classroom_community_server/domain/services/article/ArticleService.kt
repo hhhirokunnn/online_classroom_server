@@ -25,6 +25,7 @@ import org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededExceptio
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.servlet.config.annotation.CorsRegistry
 import java.io.File
@@ -36,6 +37,7 @@ import java.util.*
 class ArticleService(private val articleRepository: ArticleRepository,
                      private val materialRepository: MaterialRepository,
                      private val stepRepository: StepRepository,
+                     private val favoriteArticleRepository: FavoriteArticleRepository,
                      private val awsConfig: AwsConfig) {
 
     fun save(article: ArticleRegisterParameter): ArticleEntity {
@@ -58,6 +60,19 @@ class ArticleService(private val articleRepository: ArticleRepository,
     }
 
     fun doFindById(articleId: Long): ArticleEntity = articleRepository.findById(articleId).orElseThrow{ ArticleNotFoundError() }
+
+    @Transactional
+    fun delete(articleId: Long, userId: Long) {
+        val article = articleRepository.findByIdAndUserId(articleId, userId)
+        val materials = materialRepository.findAllByArticleIdOrderByIdAsc(articleId)
+        val favoriteArticles = favoriteArticleRepository.findAllByArticleId(articleId)
+        val steps = stepRepository.findAllByArticleIdOrderByIdAsc(articleId)
+        materials.map { materialRepository.delete(it) }
+        steps.map { stepRepository.delete(it) }
+        favoriteArticles.map { favoriteArticleRepository.delete(it) }
+        article?.let { articleRepository.delete(it) }
+    }
+
 
     private fun toEntity(article: ArticleRegisterParameter, image: String?) =
         ArticleEntity(

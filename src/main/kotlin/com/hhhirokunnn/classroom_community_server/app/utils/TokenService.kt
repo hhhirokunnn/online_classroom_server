@@ -50,14 +50,11 @@ object TokenService {
         return TOKEN_PREFIX + token
     }
 
-    fun identifyToken(bearerToken: String, userService: UserService): UserResponse {
+    fun doIdentifyToken(bearerToken: String, userService: UserService): UserEntity {
         val token = bearerToken.replaceFirst(TOKEN_PREFIX, "")
 //        FIXME: Error handling
         val userId = JWT.decode(token).getClaim("id").asLong()
-        val user = userService.doFindById(userId)
 
-        return UserResponse(
-            userName = user.name,
-            mail = user.mail)
+        return userService.doFindById(userId)
     }
 }

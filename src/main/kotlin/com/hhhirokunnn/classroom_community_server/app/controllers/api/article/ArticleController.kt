@@ -32,11 +32,14 @@ class ArticleController(
     fun create(@RequestHeader authorization: String,
                @RequestParam("title") title: String,
                @RequestParam("summary") summary: String,
-               @RequestParam("userId") userId: Long,
                @RequestParam("estimatedTime") estimatedTime: Int?,
                @RequestParam("memberUnit") memberUnit: Int?,
                @RequestParam("youtubeLink") youtubeLink: String?,
                @RequestParam("image") image: MultipartFile?): ResponseEntity<MyResponse> {
+
+        TokenService.authenticateToken(authorization)
+
+        val user = TokenService.doIdentifyToken(authorization, userService)
 
         val param = ArticleRegisterParameter(
             title = title,
@@ -44,7 +47,7 @@ class ArticleController(
             estimatedTime = estimatedTime,
             memberUnit = memberUnit,
             youtubeLink = youtubeLink,
-            userId = userId,
+            userId = user.id!!,
             image = image)
 
         val validator = ArticleRegisterParameterValidator(
@@ -53,6 +56,26 @@ class ArticleController(
         val (responseContent, responseStatus) = validator.validate()
 
         return ResponseEntity(responseContent, responseStatus)
+    }
+
+//    TODO: 論理削除
+    @DeleteMapping
+    fun delete(@RequestHeader authorization: String,
+               @PathVariable("articleId") articleId: Long): ResponseEntity<MyResponse> {
+
+        TokenService.authenticateToken(authorization)
+
+        val user = TokenService.doIdentifyToken(authorization, userService)
+        val article = articleService.doFindById(articleId)
+
+        articleService.delete(articleId = article.id!!, userId = user.id!!)
+
+    return ResponseEntity(
+            SuccessResponse(
+                    message = "記事を削除しました",
+                    status = 200,
+                    content = ""),
+            HttpStatus.OK)
     }
 
     @GetMapping

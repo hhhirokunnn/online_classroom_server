@@ -10,4 +10,5 @@ interface FavoriteArticleRepository: JpaRepository<FavoriteArticleEntity, Long> 
     fun save(favoriteArticleEntity: FavoriteArticleEntity): FavoriteArticleEntity
     fun findByUserIdOrderByCreatedAtDesc(userId: Long): List<FavoriteArticleEntity>
     fun countByArticleId(id: Long): Int
+    fun findAllByArticleId(articleId: Long): List<FavoriteArticleEntity>
 }

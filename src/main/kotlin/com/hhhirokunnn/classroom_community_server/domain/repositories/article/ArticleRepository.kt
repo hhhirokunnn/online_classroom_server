@@ -15,6 +15,8 @@ interface ArticleRepository: CrudRepository<ArticleEntity, Long> {
 
     fun findAllByIdIn(ids: List<Long?>): List<ArticleEntity>
 
+    fun findByIdAndUserId(id: Long, userId: Long): ArticleEntity?
+
     @Query("select a from ArticleEntity a order by created_at desc")
     fun queryAll(): List<ArticleEntity>
 }

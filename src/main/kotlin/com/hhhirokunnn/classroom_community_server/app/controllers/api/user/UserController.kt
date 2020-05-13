@@ -26,26 +26,6 @@ class UserController(private val userService: UserService) {
             ), HttpStatus.OK)
     }
 
-    @GetMapping("/users")
-    fun find(@RequestHeader authorization: String): ResponseEntity<MyResponse> {
-
-        TokenService.authenticateToken(authorization)
-
-        val userResponse = try {
-            TokenService.identifyToken(authorization, userService)
-        } catch (e: UserNotFoundError) {
-            return ResponseEntity(
-                SuccessResponse(message = "", content = ""),
-                HttpStatus.OK)
-        }
-
-        return ResponseEntity(
-            SuccessResponse(
-                message = "",
-                content = userResponse),
-            HttpStatus.OK)
-    }
-
     @PostMapping("/login")
     fun login(@RequestBody @Valid param: LoginParameter): ResponseEntity<MyResponse> {
         val user = userService.findByMailAndPassword(mail = param.mail, password = param.password)
