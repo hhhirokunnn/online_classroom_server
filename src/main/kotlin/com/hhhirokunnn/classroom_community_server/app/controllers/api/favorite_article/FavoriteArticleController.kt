@@ -37,8 +37,8 @@ class FavoriteArticleController(
 
         TokenService.authenticateToken(authorization)
 
+        val user = TokenService.doIdentifyToken(authorization, userService)
         val article = articleService.doFindById(param.articleId)
-        val user = userService.doFindById(param.userId)
 
         favoriteArticleService.save(user, article)
 

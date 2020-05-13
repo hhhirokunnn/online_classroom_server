@@ -61,8 +61,10 @@ class ArticleService(private val articleRepository: ArticleRepository,
 
     fun doFindById(articleId: Long): ArticleEntity = articleRepository.findById(articleId).orElseThrow{ ArticleNotFoundError() }
 
+    fun doFindByIdAndUserId(articleId: Long, userId: Long): ArticleEntity = articleRepository.findByIdAndUserId(articleId, userId).orElseThrow{ ArticleNotFoundError() }
+
     @Transactional
-    fun delete(articleId: Long, userId: Long) {
+    fun delete(articleId: Long, userId: Long): Unit {
         val article = articleRepository.findByIdAndUserId(articleId, userId)
         val materials = materialRepository.findAllByArticleIdOrderByIdAsc(articleId)
         val favoriteArticles = favoriteArticleRepository.findAllByArticleId(articleId)
@@ -70,7 +72,7 @@ class ArticleService(private val articleRepository: ArticleRepository,
         materials.map { materialRepository.delete(it) }
         steps.map { stepRepository.delete(it) }
         favoriteArticles.map { favoriteArticleRepository.delete(it) }
-        article?.let { articleRepository.delete(it) }
+        article.map { articleRepository.delete(it) }
     }
 
 

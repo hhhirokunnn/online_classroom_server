@@ -46,7 +46,7 @@ class CommentController(
 
         TokenService.authenticateToken(authorization)
 
-        val user = userService.doFindById(param.userId)
+        val user = TokenService.doIdentifyToken(authorization, userService)
         val article = articleService.doFindById(param.articleId)
 
         return ResponseEntity(
@@ -60,7 +60,7 @@ class CommentController(
             HttpStatus.OK)
     }
 
-    @DeleteMapping
+    @DeleteMapping("/{commentId}")
     fun delete(@RequestHeader authorization: String,
                @PathVariable("commentId") commentId: Long): ResponseEntity<MyResponse> {
 

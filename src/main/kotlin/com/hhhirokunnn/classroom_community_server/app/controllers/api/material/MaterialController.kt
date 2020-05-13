@@ -6,6 +6,7 @@ import com.hhhirokunnn.classroom_community_server.app.models.responses.SuccessRe
 import com.hhhirokunnn.classroom_community_server.app.utils.TokenService
 import com.hhhirokunnn.classroom_community_server.domain.services.article.ArticleService
 import com.hhhirokunnn.classroom_community_server.domain.services.material.MaterialService
+import com.hhhirokunnn.classroom_community_server.domain.services.user.UserService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -14,6 +15,7 @@ import javax.validation.Valid
 @RestController
 @RequestMapping("/api/materials")
 class MaterialController(
+        private val userService: UserService,
         private val articleService: ArticleService,
         private val materialService: MaterialService
 ) {
@@ -24,7 +26,9 @@ class MaterialController(
 
         TokenService.authenticateToken(authorization)
 
-        val article = articleService.doFindById(param.articleId)
+        val user = TokenService.doIdentifyToken(authorization, userService)
+
+        val article = articleService.doFindByIdAndUserId(param.articleId, user.id!!)
 
         return ResponseEntity(
             SuccessResponse(

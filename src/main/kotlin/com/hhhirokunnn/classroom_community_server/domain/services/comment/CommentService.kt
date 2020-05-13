@@ -37,7 +37,7 @@ class CommentService(private val commentRepository: CommentRepository,
     fun delete(commentId: Long, userId: Long): Unit {
 
         val user = userRepository.findById(userId).orElseThrow { throw UserNotFoundError() }
-        val comment = commentRepository.findById(commentId).orElseThrow { throw CommentNotFoundError() }
+        val comment = commentRepository.findByIdAndUserId(id = commentId, userId = user.id!!).orElseThrow { throw CommentNotFoundError() }
 
         commentRepository.delete(comment)
     }

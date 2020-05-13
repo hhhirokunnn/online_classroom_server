@@ -66,9 +66,9 @@ class ArticleController(
         TokenService.authenticateToken(authorization)
 
         val user = TokenService.doIdentifyToken(authorization, userService)
-        val article = articleService.doFindById(articleId)
+        val article = articleService.doFindByIdAndUserId(articleId, user.id!!)
 
-        articleService.delete(articleId = article.id!!, userId = user.id!!)
+        articleService.delete(articleId = article.id!!, userId = user.id)
 
     return ResponseEntity(
             SuccessResponse(
