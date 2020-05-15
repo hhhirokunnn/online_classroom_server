@@ -41,6 +41,7 @@ class UserController(private val userService: UserService) {
                 ErrorResponse("ログインに失敗しました。"),
                 HttpStatus.UNAUTHORIZED) }
 
+    @CrossOrigin
     @DeleteMapping("/logout")
     fun logout(): ResponseEntity<MyResponse> =
         ResponseEntity(

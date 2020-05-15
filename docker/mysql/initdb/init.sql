@@ -51,9 +51,9 @@ DROP TABLE IF EXISTS `steps`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `steps` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `description` varchar(500) DEFAULT NULL,
+  `description` varchar(500) NOT NULL,
   `image` varchar(100) DEFAULT NULL,
-  `article_id` bigint(20) DEFAULT NULL,
+  `article_id` bigint(20) NOT NULL,
   `created_at` datetime(6) DEFAULT NULL,
   `updated_at` datetime(6) DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -67,11 +67,11 @@ DROP TABLE IF EXISTS `materials`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `materials` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `item` varchar(100) NOT NULL,
+  `item` varchar(100) DEFAULT NULL,
   `item_unit` int(11) DEFAULT NULL,
   `preparation` varchar(500) NOT NULL,
   `url` varchar(500) DEFAULT NULL,
-  `article_id` bigint(20) DEFAULT NULL,
+  `article_id` bigint(20) NOT NULL,
   `created_at` datetime(6) DEFAULT NULL,
   `updated_at` datetime(6) DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -85,8 +85,8 @@ DROP TABLE IF EXISTS `favorite_articles`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `favorite_articles` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `article_id` bigint(20) DEFAULT NULL,
-  `user_id` bigint(20) DEFAULT NULL,
+  `article_id` bigint(20) NOT NULL,
+  `user_id` bigint(20) NOT NULL,
   `created_at` datetime(6) DEFAULT NULL,
   `updated_at` datetime(6) DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -102,8 +102,8 @@ DROP TABLE IF EXISTS `comments`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `comments` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `article_id` bigint(20) DEFAULT NULL,
-  `user_id` bigint(20) DEFAULT NULL,
+  `article_id` bigint(20) NOT NULL,
+  `user_id` bigint(20) NOT NULL,
   `content` varchar(500) NOT NULL,
   `created_at` datetime(6) DEFAULT NULL,
   `updated_at` datetime(6) DEFAULT NULL,
@@ -120,8 +120,8 @@ DROP TABLE IF EXISTS `favorite_comments`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `favorite_comments` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `comment_id` bigint(20) DEFAULT NULL,
-  `user_id` bigint(20) DEFAULT NULL,
+  `comment_id` bigint(20) NOT NULL,
+  `user_id` bigint(20) NOT NULL,
   `created_at` datetime(6) DEFAULT NULL,
   `updated_at` datetime(6) DEFAULT NULL,
   PRIMARY KEY (`id`),

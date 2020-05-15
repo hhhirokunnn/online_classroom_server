@@ -59,6 +59,7 @@ class ArticleController(
     }
 
 //    TODO: 論理削除
+    @CrossOrigin
     @DeleteMapping
     fun delete(@RequestHeader authorization: String,
                @PathVariable("articleId") articleId: Long): ResponseEntity<MyResponse> {
