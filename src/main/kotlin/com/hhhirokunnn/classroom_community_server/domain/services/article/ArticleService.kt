@@ -16,6 +16,7 @@ import com.hhhirokunnn.classroom_community_server.configs.AwsConfig
 import com.hhhirokunnn.classroom_community_server.domain.entities.article.ArticleEntity
 import com.hhhirokunnn.classroom_community_server.domain.entities.material.MaterialEntity
 import com.hhhirokunnn.classroom_community_server.domain.entities.step.StepEntity
+import com.hhhirokunnn.classroom_community_server.domain.entities.user.UserRepository
 import com.hhhirokunnn.classroom_community_server.domain.repositories.article.ArticleRepository
 import com.hhhirokunnn.classroom_community_server.domain.repositories.favorite_article.FavoriteArticleRepository
 import com.hhhirokunnn.classroom_community_server.domain.repositories.material.MaterialRepository
@@ -38,25 +39,31 @@ class ArticleService(private val articleRepository: ArticleRepository,
                      private val materialRepository: MaterialRepository,
                      private val stepRepository: StepRepository,
                      private val favoriteArticleRepository: FavoriteArticleRepository,
+                     private val userRepository: UserRepository,
                      private val awsConfig: AwsConfig) {
 
     fun save(article: ArticleRegisterParameter): ArticleEntity {
-        val fileName = article.image?.let { uploadFile(it, article.userId.toString()) }
+        val fileName = article.image?.let { uploadFile(it, article.user.id!!.toString()) }
         return articleRepository.save(toEntity(article, fileName))
     }
 
     fun findAll(from: Int, size: Int): List<ArticleResponse> {
         val articles = articleRepository.findAllByOrderByCreatedAtDesc(PageRequest.of(from, size))
-        return articles.map { toResponse(it) }
+        val totalCount = articleRepository.count()
+        return articles.map { toResponse(it, totalCount) }
     }
 
     fun findDetailById(articleId: Long): ArticleDetailResponse {
+        val article = doFindById(articleId)
         val materials = materialRepository.findAllByArticleIdOrderByIdAsc(articleId)
         val steps = stepRepository.findAllByArticleIdOrderByIdAsc(articleId)
+        val favoriteCount = favoriteArticleRepository.countByArticleId(articleId)
         return toDetailResponse(
-                article = doFindById(articleId),
+                article = article,
                 materials = materials,
-                steps = steps)
+                steps = steps,
+                favoriteCount = favoriteCount,
+                authorName = article.user.name)
     }
 
     fun doFindById(articleId: Long): ArticleEntity = articleRepository.findById(articleId).orElseThrow{ ArticleNotFoundError() }
@@ -84,10 +91,10 @@ class ArticleService(private val articleRepository: ArticleRepository,
             memberUnit = article.memberUnit,
             image = image,
             youtubeLink = article.youtubeLink,
-            userId = article.userId
+            user = article.user
         )
 
-    private fun toResponse(articleEntity: ArticleEntity) =
+    private fun toResponse(articleEntity: ArticleEntity, count: Long) =
             ArticleResponse(
                     id = articleEntity.id!!,
                     title = articleEntity.title,
@@ -96,6 +103,7 @@ class ArticleService(private val articleRepository: ArticleRepository,
                     memberUnit = articleEntity.memberUnit,
                     image = articleEntity.image,
                     youtubeLink = articleEntity.youtubeLink,
+                    count = count,
                     createdAt = articleEntity.createdAt)
 
     private fun toMaterialsResponse(materials: List<MaterialEntity>) =
@@ -117,11 +125,15 @@ class ArticleService(private val articleRepository: ArticleRepository,
     private fun toDetailResponse(
             article: ArticleEntity,
             materials: List<MaterialEntity>,
-            steps: List<StepEntity>) =
+            steps: List<StepEntity>,
+            favoriteCount: Int,
+            authorName: String) =
             ArticleDetailResponse(
-                article = toResponse(article),
+                article = toResponse(article, 0),
                 materials = toMaterialsResponse(materials),
-                steps = toStepsResponse(steps))
+                steps = toStepsResponse(steps),
+                favoriteCount = favoriteCount,
+                authorName = authorName)
 
     private fun uploadFile(image: MultipartFile, imageId: String): String {
         return S3Client(awsConfig, awsConfig.articleBucketKey).upload(image, imageId)

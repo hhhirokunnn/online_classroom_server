@@ -10,5 +10,6 @@ data class ArticleResponse(
     val memberUnit: Int?,
     val image: String?,
     val youtubeLink: String?,
+    val count: Long,
     val createdAt: LocalDateTime
 )

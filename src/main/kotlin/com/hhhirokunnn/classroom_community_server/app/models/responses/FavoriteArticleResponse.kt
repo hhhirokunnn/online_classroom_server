@@ -5,6 +5,7 @@ data class FavoriteArticleResponse(
         val articles: List<FavoriteArticle>
 ) {
     data class FavoriteArticle(
+        val id: Long,
         val articleId: Long,
         val title: String
     )

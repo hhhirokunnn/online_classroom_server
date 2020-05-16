@@ -20,8 +20,12 @@ class FavoriteArticleController(
 ) {
     @GetMapping
     fun find(@RequestHeader authorization: String,
-             @RequestParam userId: Long): ResponseEntity<MyResponse> {
-        val articles = favoriteArticleService.findAllArticles(userId)
+             @RequestParam from: Int, size: Int): ResponseEntity<MyResponse> {
+        val user = TokenService.doIdentifyToken(authorization, userService)
+        val articles = favoriteArticleService.findAllArticles(
+                userId = user.id!!,
+                from = from,
+                size = size)
 
         return ResponseEntity(
             SuccessResponse(
@@ -38,13 +42,29 @@ class FavoriteArticleController(
         TokenService.authenticateToken(authorization)
 
         val user = TokenService.doIdentifyToken(authorization, userService)
-        val article = articleService.doFindById(param.articleId)
-
-        favoriteArticleService.save(user, article)
 
         return ResponseEntity(
                 SuccessResponse(
                         message = "お気に入りに登録しました",
+                        status = 200,
+                        content = favoriteArticleService.save(user, param.articleId)),
+                HttpStatus.OK)
+    }
+
+    @CrossOrigin
+    @DeleteMapping("/{favoriteArticleId}")
+    fun delete(@RequestHeader authorization: String,
+               @PathVariable("favoriteArticleId") favoriteArticleId: Long): ResponseEntity<MyResponse> {
+
+        TokenService.authenticateToken(authorization)
+
+        val user = TokenService.doIdentifyToken(authorization, userService)
+
+        favoriteArticleService.delete(user.id!!, favoriteArticleId)
+
+        return ResponseEntity(
+                SuccessResponse(
+                        message = "お気に入りをやめました",
                         status = 200,
                         content = ""),
                 HttpStatus.OK)

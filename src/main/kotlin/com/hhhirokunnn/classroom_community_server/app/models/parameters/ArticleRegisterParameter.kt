@@ -1,6 +1,7 @@
 package com.hhhirokunnn.classroom_community_server.app.models.parameters
 
 import com.hhhirokunnn.classroom_community_server.app.models.errors.*
+import com.hhhirokunnn.classroom_community_server.domain.entities.user.UserEntity
 import org.springframework.web.multipart.MultipartFile
 
 data class ArticleRegisterParameter(
@@ -9,8 +10,8 @@ data class ArticleRegisterParameter(
     val estimatedTime: Int?,
     val memberUnit: Int?,
     val youtubeLink: String?,
-    val userId: Long,
-    val image: MultipartFile?
+    val image: MultipartFile?,
+    val user: UserEntity
 ) {
     fun validate() = run {
         if (title.isEmpty()) throw EmptyError(columnName = "タイトル")

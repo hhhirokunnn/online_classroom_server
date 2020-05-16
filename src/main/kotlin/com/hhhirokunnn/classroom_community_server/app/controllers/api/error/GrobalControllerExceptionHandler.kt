@@ -82,6 +82,16 @@ class GrobalControllerExceptionHandler {
             HttpStatus.BAD_REQUEST)
     }
 
+    @ExceptionHandler(FavoriteArticleError::class)
+    fun validationError(e: FavoriteArticleError): ResponseEntity<ErrorResponse> {
+        return ResponseEntity(
+                ErrorResponse(
+                        message = e.errorMessage,
+                        status = 400,
+                        error = "BadRequest"),
+                HttpStatus.BAD_REQUEST)
+    }
+
     @ExceptionHandler(UserError::class)
     fun validationError(e: UserError): ResponseEntity<ErrorResponse> {
         return ResponseEntity(

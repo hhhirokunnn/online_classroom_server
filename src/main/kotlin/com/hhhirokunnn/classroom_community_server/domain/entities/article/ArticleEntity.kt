@@ -34,12 +34,12 @@ class ArticleEntity (
     @Column(name = "youtube_link", length = 100, nullable = true)
     val youtubeLink: String?,
 
-    @Column(name = "user_id", nullable = false)
-    val userId: Long,
+//    @Column(name = "user_id", nullable = false)
+//    val userId: Long,
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "user_id", referencedColumnName = "id")
-//    val user: UserEntity,
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    val user: UserEntity,
 
     @Column(name = "created_at")
     val createdAt: LocalDateTime = now(),

@@ -21,8 +21,8 @@ class CommentController(
         private val userService: UserService,
         private val articleService: ArticleService
 ) {
-    @GetMapping
-    fun findAll(@RequestParam articleId: Long): ResponseEntity<MyResponse> {
+    @GetMapping("/{articleId}")
+    fun findAll(@PathVariable("articleId") articleId: Long): ResponseEntity<MyResponse> {
 
         val comments = commentService.findAllByArticleIdOrderByCreatedAtDesc(articleId)
 

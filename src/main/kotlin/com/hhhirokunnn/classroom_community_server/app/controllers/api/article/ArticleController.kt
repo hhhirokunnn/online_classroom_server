@@ -47,7 +47,7 @@ class ArticleController(
             estimatedTime = estimatedTime,
             memberUnit = memberUnit,
             youtubeLink = youtubeLink,
-            userId = user.id!!,
+            user = user,
             image = image)
 
         val validator = ArticleRegisterParameterValidator(
@@ -80,7 +80,7 @@ class ArticleController(
     }
 
     @GetMapping
-    fun findAll(@RequestParam from: Int, size: Int = 20): ResponseEntity<MyResponse> {
+    fun findAll(@RequestParam from: Int, size: Int): ResponseEntity<MyResponse> {
 
         return ResponseEntity(
             SuccessResponse(
