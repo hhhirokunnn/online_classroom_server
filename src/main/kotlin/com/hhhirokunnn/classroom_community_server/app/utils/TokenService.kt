@@ -36,7 +36,7 @@ object TokenService {
         try {
             val calendar = Calendar.getInstance()
             calendar.time = Date()
-            calendar.add(Calendar.SECOND, 300)
+            calendar.add(Calendar.HOUR, 24)
             val expireTime = calendar.time
             token = JWT.create()
                     .withIssuer("auth0")
